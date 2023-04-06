@@ -1,4 +1,7 @@
 -- better-window.nvim.lua
+print("Requrie")
+require("better-window.tabufline.lazyload")
+print("Requrie")
 local utils = require("better-window.utils")
 local EditorGroup = require("better-window.manager")
 
@@ -40,6 +43,7 @@ local function move(direction)
 	end
 
 	if new_win_id == nil then
+		print("You can't move out of bounds")
 		return
 	end
 
@@ -88,7 +92,7 @@ local function update_layout(event)
 	end
 
 	-- NOTE: WinNew and WinClosed are triggered too often in the background (probably by other plugins)
-    -- NOTE: Therefore we ignore the event it the layout didn't change
+	-- NOTE: Therefore we ignore the event it the layout didn't change
 	if event == "WNC" and #editor_group.ordered_stacks == #open_windows then
 		return
 	end
@@ -108,14 +112,39 @@ local function update_layout(event)
 
 	-- manage saved buffers
 	if #editor_group.ordered_stacks ~= #open_windows then
-        -- remove stack if we closed a window
+		-- remove stack if we closed a window
 		editor_group:removeGroupIfWindowRemoved(open_windows)
 	end
 	-- always set order like on screen
 	editor_group:setGroupOrder(open_windows)
 end
 
+
+local function update_bufferline()
+  local win_id = vim.api.nvim_get_current_win()
+
+  local stack = editor_group:getGroup(win_id)
+  local items = stack.items
+  local buf_list = {}
+
+  for _, bufnr in ipairs(items) do
+    local buf_name = vim.fn.bufname(bufnr)
+    local buf_display = buf_name:match("([^/]+)$")
+
+    local is_current = (bufnr == vim.api.nvim_get_current_buf())
+
+    if is_current then
+      table.insert(buf_list, "%#BufferLineCurrent# " .. buf_display .. " ")
+    else
+      table.insert(buf_list, "%#BufferLine# " .. buf_display .. " ")
+    end
+  end
+
+  vim.o.statusline = table.concat(buf_list)
+end
+
 return {
+	update_bufferline = update_bufferline,
 	update_layout = update_layout,
 	remove_buffer = remove_buffer,
 	move = move,
