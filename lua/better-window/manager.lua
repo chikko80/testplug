@@ -54,7 +54,7 @@ function EditorGroup:moveEditorToAnotherGroup(src_winid, dst_winid, bufnr)
 	end
 end
 
-function EditorGroup:removeBufferFromGroup(group_id, bufnr)
+function EditorGroup:removeBufferFromGroup(group_id)
 	local group = self:getGroup(group_id)
 	group:pop()
 end

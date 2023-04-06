@@ -1,5 +1,6 @@
 -- better-window.nvim.lua
 
+
 local utils = require("better-window.utils")
 local EditorGroup = require("better-window.manager")
 
@@ -22,9 +23,9 @@ local function setup()
       augroup END
     ]])
 	-- Create commands
-	vim.cmd("command! MoveBufferLeft lua require('better-window').move('l')")
-	vim.cmd("command! MoveBufferRight lua require('better-window').move('r')")
-	vim.cmd("command! RemoveBufferFromStack lua require('better-window').remove_buffer()")
+	vim.cmd("command! BetterWinMoveLeft lua require('better-window').move('l')")
+	vim.cmd("command! BetterWinMoveRight lua require('better-window').move('r')")
+	vim.cmd("command! BetterWinRemoveFromStack lua require('better-window').remove_buffer()")
 end
 
 local function move(direction)
@@ -71,7 +72,7 @@ local function remove_buffer()
 	local current_window = vim.api.nvim_get_current_win()
 	local current_buffer = vim.api.nvim_get_current_buf()
 
-	editor_group:removeBufferFromGroup(current_window, current_buffer)
+	editor_group:removeBufferFromGroup(current_window)
 	local previous_buffer = editor_group:getLatestBuffer(current_window)
 	if previous_buffer == nil then
 		-- close winfo if no buffer left on stack
@@ -108,13 +109,12 @@ local function update_layout(event)
 	end
 
 	-- manage saved buffers
-	-- TODO: remove groups if not in current tab
-	-- TODO: sort
 	if #editor_group.ordered_stacks ~= #open_windows then
+        -- remove stack if we closed a window
 		editor_group:removeGroupIfWindowRemoved(open_windows)
 	end
+	-- always set order like on screen
 	editor_group:setGroupOrder(open_windows)
-	debug()
 end
 
 return {

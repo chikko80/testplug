@@ -5,6 +5,7 @@ This plugin is highly experimental and currently under development. Vertical-spl
 
 A VSCode-like window managment plugin for Neovim.
 Only with NvimTree
+Stack based buffer managment
 
 ##  Whats the difference?
 explain how
