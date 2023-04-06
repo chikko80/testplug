@@ -176,13 +176,20 @@ M.bufferlist = function(bufferlist)
 	end
 
 	vim.g.visibuffers = buffers
-	local tabline = table.concat(buffers) .. "%#TblineFill#" .. "%="
-	-- local tabline = table.concat(buffers) .. "%#TblineFill#" .. "%="
+	return buffers, number_of_buffers
+end
 
-	-- local current_win_width = vim.api.nvim_win_get_width(winid)
-	-- local padding = string.rep(" ", current_win_width - 24)
-	-- tabline = tabline .. padding
-	return tabline, number_of_buffers
+local function slice_last_elements(tbl, n)
+	local sliced = {}
+	local start_index = math.max(#tbl - n + 1, 1)
+
+	for i = start_index, #tbl do
+		if tbl[i] ~= nil then
+			table.insert(sliced, tbl[i])
+		end
+	end
+
+	return sliced
 end
 
 M.run = function()
@@ -204,12 +211,16 @@ M.run = function()
 		local winid = editor_group.ordered_stacks[i]
 		local ok, current_win_width = pcall(vim.api.nvim_win_get_width, winid)
 		if ok then
-            -- if number_of_buffers * 24 > current_win_width then
-            --     -- we don't have enough space
-            -- end
-            
 			local number_of_buffers = result[i].number_of_buffers
-			local tabline = result[i].tabline
+			local buffers = result[i].tabline
+			if number_of_buffers * 24 > current_win_width then
+				local max_buffer = math.floor(current_win_width / 24)
+				number_of_buffers = max_buffer
+				buffers = slice_last_elements(buffers, number_of_buffers)
+				print("too long")
+			end
+			-- ensure buffers aren't to long
+			local tabline = table.concat(buffers) .. "%#TblineFill#" .. "%="
 			tabline_string = tabline_string .. tabline .. string.rep(" ", current_win_width - 24 * number_of_buffers)
 		end
 	end
