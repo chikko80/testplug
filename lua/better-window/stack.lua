@@ -48,7 +48,6 @@ end
 
 -- Pop an item from the stack
 function Stack:pop()
-	-- print("popping")
 	if self:isEmpty() then
 		error("Stack is empty")
 	else
@@ -85,7 +84,6 @@ function Stack:print()
 			output = output .. ", "
 		end
 	end
-	-- print(output)
 end
 
 return Stack

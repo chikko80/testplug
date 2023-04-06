@@ -4,15 +4,13 @@ local EditorGroup = require("better-window.manager")
 
 local editor_group = EditorGroup.new()
 
-local function get_groups()
+local function debug()
 	for _, win_id in pairs(editor_group.ordered_stacks) do
-		-- print("Window ID:", win_id)
 		print("Stack contents:", vim.inspect(editor_group.stacks[win_id]))
 	end
 end
 
 local function setup()
-	-- print("CAlling setup")
 	-- TODO: rethink about events
 	vim.cmd([[
       augroup LayoutTracker
@@ -42,7 +40,6 @@ local function move(direction)
 	end
 
 	if new_win_id == nil then
-		print("You can not move out of bounds")
 		return
 	end
 
@@ -52,7 +49,6 @@ local function move(direction)
 
 	-- move buffer to new group
 	editor_group:moveEditorToAnotherGroup(old_win_id, new_win_id, old_buf)
-	get_groups()
 
 	-- replace the old buffer by latest stack after pop
 	local latest_buffer = editor_group:getLatestBuffer(old_win_id)
@@ -86,8 +82,7 @@ local function remove_buffer()
 end
 
 local function update_layout()
-	-- create list
-	-- print("Starting")
+	-- get list of open buffers
 	local open_windows = utils.get_open_windows()
 	if open_windows == nil then
 		return
@@ -98,12 +93,10 @@ local function update_layout()
 		local bufnr = utils.get_open_buffer_per_win(win_id)
 		-- creaste group if not exists
 		if not editor_group:groupExists(win_id) then
-			-- print("Group doesn't exist, creating new group...")
 			editor_group:createGroup(win_id)
 			editor_group:addBufferToGroup(win_id, bufnr)
 		else
 			-- if group exists, add buffer to group
-			-- print("Group does exist, adding buffer to group...")
 			editor_group:addBufferToGroup(win_id, bufnr)
 		end
 	end
@@ -112,7 +105,6 @@ local function update_layout()
 	-- TODO: remove groups if not in current tab
 	-- TODO: sort
 	if #editor_group.ordered_stacks ~= #open_windows then
-		-- print("ordered_stacks != open_windows, removing group...")
 		editor_group:removeGroupIfWindowRemoved(open_windows)
 	end
 	editor_group:setGroupOrder(open_windows)
@@ -123,7 +115,7 @@ return {
 	remove_buffer = remove_buffer,
 	move = move,
 	setup = setup,
-	get_groups = get_groups,
+	debug = debug,
 }
 
 --
