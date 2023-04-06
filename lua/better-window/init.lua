@@ -1,6 +1,4 @@
 -- better-window.nvim.lua
-
-
 local utils = require("better-window.utils")
 local EditorGroup = require("better-window.manager")
 
