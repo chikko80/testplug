@@ -26,6 +26,7 @@ local function setup()
 	vim.cmd("command! BetterWinMoveLeft lua require('better-window').move('l')")
 	vim.cmd("command! BetterWinMoveRight lua require('better-window').move('r')")
 	vim.cmd("command! BetterWinRemoveFromStack lua require('better-window').remove_buffer()")
+	vim.cmd("command! BetterWinSelection lua require('better-window.selection').show_popup()")
 end
 
 local function move(direction)
@@ -115,7 +116,6 @@ local function update_layout(event)
 	end
 	-- always set order like on screen
 	editor_group:setGroupOrder(open_windows)
-
 end
 
 return {
