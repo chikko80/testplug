@@ -217,7 +217,6 @@ M.run = function()
 				local max_buffer = math.floor(current_win_width / 24)
 				number_of_buffers = max_buffer
 				buffers = slice_last_elements(buffers, number_of_buffers)
-				print("too long")
 			end
 			-- ensure buffers aren't to long
 			local tabline = table.concat(buffers) .. "%#TblineFill#" .. "%="
