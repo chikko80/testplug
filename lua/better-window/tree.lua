@@ -47,13 +47,14 @@ function PaneTree:_findNodeByWinId(node, winId)
 	return nil
 end
 
-function PaneTree:splitVertical(winId, newWinId)
+function PaneTree:splitVertical(winId, newWinId, bufnr)
 	local node = self:findNodeByWinId(winId)
 	if not node then
 		error("Window not found in the tree")
 	end
 
 	local newEditorGroup = EditorGroup.new(newWinId)
+	newEditorGroup:addEditor(bufnr)
 	local newNode = Node.new(newEditorGroup, nil)
 
 	if node.parent.isVertical == true then
@@ -77,15 +78,15 @@ function PaneTree:splitVertical(winId, newWinId)
 	end
 end
 
-function PaneTree:splitHorizontal(winId, newWinId)
+function PaneTree:splitHorizontal(winId, newWinId, bufnr)
 	local node = self:findNodeByWinId(winId)
 	if not node then
 		error("Window not found in the tree")
 	end
 
 	local newEditorGroup = EditorGroup.new(newWinId)
+	newEditorGroup:addEditor(bufnr)
 	local newNode = Node.new(newEditorGroup, nil)
-
 
 	if node.parent.isVertical == false then
 		-- If the parent is already a horizontal split type, just add the new node as a sibling
@@ -106,7 +107,6 @@ function PaneTree:splitHorizontal(winId, newWinId)
 		newParentNode:addChild(node, false)
 		newParentNode:addChild(newNode, false)
 	end
-
 end
 
 function PaneTree:printTree()
@@ -118,6 +118,18 @@ function PaneTree:_printTreeRecursive(node, level)
 
 	if node.editorGroup then
 		print(indent .. "EditorGroup (win_id=" .. node.editorGroup.win_id .. ")")
+		if not node.editorGroup.stack:isEmpty() then
+			local buffers_str = indent .. "  Buffers: "
+			for i, bufnr in ipairs(node.editorGroup.stack.items) do
+				buffers_str = buffers_str .. bufnr
+				if i < #node.editorGroup.stack.items then
+					buffers_str = buffers_str .. ", "
+				end
+			end
+			print(buffers_str)
+		else
+			print(indent .. "  No Buffers")
+		end
 	elseif node == self.rootNode then
 		print(indent .. "RootNode")
 	else

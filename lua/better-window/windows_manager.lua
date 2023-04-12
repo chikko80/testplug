@@ -13,15 +13,25 @@ function WindowManager.new()
 	return self
 end
 
+function WindowManager:addEditor(winId, bufId)
+    local node = self.paneTree:findNodeByWinId(winId)
+    if not node then
+        return
+    end
+
+    node.editorGroup:addEditor(bufId)
+end
+
 function WindowManager:split(command)
+    local old_buf_id = vim.api.nvim_get_current_buf()
 	local old_win_id = vim.api.nvim_get_current_win()
 	vim.api.nvim_command(command)
 	local newWinId = vim.api.nvim_get_current_win()
 
 	if command == "vsplit" then
-		self.paneTree:splitVertical(old_win_id, newWinId)
+		self.paneTree:splitVertical(old_win_id, newWinId, old_buf_id)
     elseif command == "split" then
-        self.paneTree:splitHorizontal(old_win_id, newWinId)
+        self.paneTree:splitHorizontal(old_win_id, newWinId, old_buf_id)
 	end
 end
 

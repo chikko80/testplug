@@ -14,12 +14,12 @@ local function setup()
 	vim.cmd("command! BetterWinMoveSplitVertical lua require('better-window').split('vsplit')")
 	vim.cmd("command! BetterWinMoveSplitHorizontal lua require('better-window').split('split')")
 
-	-- vim.cmd([[
-	--      augroup LayoutTracker
-	--        autocmd!
-	--        autocmd VimEnter * lua require('better-window').init()
-	--      augroup END
- --   ]])
+	vim.cmd([[
+	     augroup LayoutTracker
+	       autocmd!
+	       autocmd BufEnter * lua require('better-window').add_buffer()
+	     augroup END
+   ]])
 
 	-- init new grid with new group
 	windows_manager = WindowManager.new()
@@ -27,6 +27,13 @@ end
 
 local function split(command)
 	windows_manager:split(command)
+end
+
+local function add_buffer()
+    print("add_buffer")
+    local winId = vim.api.nvim_get_current_win()
+    local bufId = vim.api.nvim_get_current_buf()
+    windows_manager:addEditor(winId, bufId)
 end
 
 -- local function init()
@@ -141,6 +148,7 @@ return {
 	-- update_layout = update_layout,
 	-- remove_buffer = remove_buffer,
 	split = split,
+	add_buffer = add_buffer,
 	-- move = move,
 	setup = setup,
 	debug = debug,
