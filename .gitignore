@@ -6,3 +6,59 @@ upcoming.txt
 .luarc.json
 *.txt
 file.lua
+
+
+i think there is a problem with the tree structure.
+its to flexible
+let my give you some examples:
+
+lets say we have a file 1
+
+If i split vertical this file i get
+| 1 | 2 | 
+
+my cursor will be on File 2 now, if i split again vertical i get
+| 1 | 2 | 3 | 
+
+my cursor will be on File 3 now, if i split again vertical i get
+| 1 | 2 | 3 | 4 |
+
+i think you get the idea, as long as i split vertical the the panes will be side by side (we add rows)
+
+
+now lets consider we split horizontal
+horizontal splitting will always create a new pane below the current pane in the same column as a new row
+
+for example if i have a single file open like this:
+
+| 1 | 
+
+and split horizontal i get
+
+| 1 | 
+| 2 | 
+
+if i split horizontal again i get
+
+| 1 |
+| 2 |
+| 3 |
+
+now lets mix them together lets say i've something like this, so i've a left, middle and right pane
+
+| 1 | 2 | 3 | 
+
+and now i'll split horizontal on the second pane, then i'll get this
+
+
+| 1 | 2 | 3 |
+    | 4 | 
+
+so my layout will be
+
+left pane: pane 1
+middle pane: 
+    pane 2
+    pane 4
+right pane: pane 3
+
