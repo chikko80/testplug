@@ -33,7 +33,6 @@ end
 function PaneTree:_findNodeByWinId(node, winId)
 	if node.editorGroup then
 		if node.editorGroup.win_id == winId then
-			print("found node")
 			return node
 		end
 	end
@@ -55,20 +54,30 @@ function PaneTree:splitVertical(winId, newWinId)
 	end
 
 	local newEditorGroup = EditorGroup.new(newWinId)
-	local newNode = Node.new(newEditorGroup, node.parent)
+	local newNode = Node.new(newEditorGroup, nil)
 
-	for i, child in ipairs(node.parent.children) do
-		if child == node then
-			table.insert(node.parent.children, i + 1, newNode)
-			break
+	if node.parent.isVertical == true then
+		-- If the parent is already a vertical split type, just add the new node as a sibling
+		node.parent:addChild(newNode, true)
+	else
+		local newParentNode = Node.new(nil, node.parent)
+		newParentNode.isVertical = true
+
+		-- Replace the original node in its parent's children list with the newParentNode
+		for i, child in ipairs(node.parent.children) do
+			if child == node then
+				node.parent.children[i] = newParentNode
+				break
+			end
 		end
+
+		-- Add the original node and the new Node as child nodes to the newParentNode
+		newParentNode:addChild(node, true)
+		newParentNode:addChild(newNode, true)
 	end
 end
 
-
 function PaneTree:splitHorizontal(winId, newWinId)
-    print('start')
-    self:printTree()
 	local node = self:findNodeByWinId(winId)
 	if not node then
 		error("Window not found in the tree")
@@ -77,8 +86,6 @@ function PaneTree:splitHorizontal(winId, newWinId)
 	local newEditorGroup = EditorGroup.new(newWinId)
 	local newNode = Node.new(newEditorGroup, nil)
 
-    print('after')
-    self:printTree()
 
 	if node.parent.isVertical == false then
 		-- If the parent is already a horizontal split type, just add the new node as a sibling
@@ -100,10 +107,7 @@ function PaneTree:splitHorizontal(winId, newWinId)
 		newParentNode:addChild(newNode, false)
 	end
 
-    print('final')
-    self:printTree()
 end
-
 
 function PaneTree:printTree()
 	self:_printTreeRecursive(self.rootNode, 0)
