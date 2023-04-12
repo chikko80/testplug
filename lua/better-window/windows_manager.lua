@@ -1,74 +1,66 @@
-local GridLayout = require("better-window.grid")
-local EditorGroup = require("better-window.editor_group")
+local TreeLayout = require("better-window.tree")
 
 local WindowManager = {}
 WindowManager.__index = WindowManager
 
 function WindowManager.new()
 	local self = setmetatable({}, WindowManager)
-	self.gridLayout = GridLayout.new()
-	local initialWin = vim.api.nvim_get_current_win()
-	local initialEditorGroup = EditorGroup.new(initialWin)
-	self.gridLayout:addEditorGroup(initialEditorGroup, 1, 1)
+	self.treeLayout = TreeLayout.new()
 	return self
 end
 
 function WindowManager:move(direction)
 	local currentWinId = vim.api.nvim_get_current_win()
-	local srcRow, srcCol = self.gridLayout:getPanePosition(currentWinId)
+	local currentNode = self.treeLayout:getPaneNode(currentWinId)
 
-	local dstRow, dstCol
+	local dstNode
 	if direction == "left" then
-		dstRow, dstCol = srcRow, srcCol - 1
+		dstNode = currentNode.parent.children[1]
 	elseif direction == "right" then
-		dstRow, dstCol = srcRow, srcCol + 1
+		dstNode = currentNode.parent.children[2]
 	elseif direction == "up" then
-		dstRow, dstCol = srcRow - 1, srcCol
+		dstNode = currentNode.parent.children[1]
 	elseif direction == "down" then
-		dstRow, dstCol = srcRow + 1, srcCol
+		dstNode = currentNode.parent.children[2]
 	end
 
-	if dstRow >= 1 and dstRow <= self.gridLayout.rows and dstCol >= 1 and dstCol <= self.gridLayout.columns then
-		local srcEditorGroup = self.gridLayout.grid[srcRow][srcCol]
-		local dstEditorGroup = self.gridLayout.grid[dstRow][dstCol]
+	if dstNode and dstNode.editorGroup then
+		local activeBuffer = currentNode.editorGroup.activeEditor
+		currentNode.editorGroup:removeEditor(activeBuffer)
+		dstNode.editorGroup:addEditor(activeBuffer)
 
-		local activeBuffer = srcEditorGroup.activeEditor
-		srcEditorGroup:removeEditor(activeBuffer)
-		dstEditorGroup:addEditor(activeBuffer)
-
-		vim.api.nvim_set_current_win(dstEditorGroup.winnr)
+		vim.api.nvim_set_current_win(dstNode.editorGroup.winnr)
 	end
 end
 
 function WindowManager:add_buffer(winnr, bufnr)
-	local row, col = self.gridLayout:getPanePosition(winnr)
-	if row and col then
-		local editorGroup = self.gridLayout.grid[row][col]
-		editorGroup:addEditor(bufnr)
+	local node = self.treeLayout:getPaneNode(winnr)
+	if node and node.editorGroup then
+		node.editorGroup:addEditor(bufnr)
 	end
 end
 
 function WindowManager:remove_buffer()
 	local currentWinId = vim.api.nvim_get_current_win()
-	local row, col = self.gridLayout:getPanePosition(currentWinId)
-	local editorGroup = self.gridLayout.grid[row][col]
-	local activeBuffer = editorGroup.activeEditor
-	editorGroup:removeEditor(activeBuffer)
+	local node = self.treeLayout:getPaneNode(currentWinId)
+	if node and node.editorGroup then
+		local activeBuffer = node.editorGroup.activeEditor
+		node.editorGroup:removeEditor(activeBuffer)
+	end
 end
 
 function WindowManager:split(command)
 	local currentBufId = vim.api.nvim_get_current_buf()
 	local currentWinId = vim.api.nvim_get_current_win()
-	local newRow, newCol = self.gridLayout:splitPane(currentWinId, command)
+	local currentNode = self.treeLayout:getPaneNode(currentWinId)
 
 	vim.api.nvim_command(command)
 
 	local newWinId = vim.api.nvim_get_current_win()
-	print(currentWinId, newWinId)
 
-	local newEditorGroup = EditorGroup.new(newWinId)
-	newEditorGroup:addEditor(currentBufId)
-	self.gridLayout:addEditorGroup(newEditorGroup, newRow, newCol)
+	local newNode = self.treeLayout:splitPane(currentNode, command)
+	newNode.editorGroup.winnr = newWinId
+	newNode.editorGroup:addEditor(currentBufId)
 end
 
 return WindowManager
