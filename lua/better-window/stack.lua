@@ -20,9 +20,10 @@ function Stack:indexOf(item)
 	return nil
 end
 
-function Stack:getTop()
+-- Peek at the top item on the stack without removing it
+function Stack:peek()
 	if self:isEmpty() then
-		return nil
+		error("Stack is empty")
 	else
 		return self.items[#self.items]
 	end
@@ -38,13 +39,8 @@ function Stack:addBufferToStack(bufnr)
 		table.insert(self.items, bufnr)
 	else
 		-- If the buffer is not in the stack, add it as usual
-		self:push(bufnr)
+		table.insert(self.items, bufnr)
 	end
-end
-
--- Push an item onto the stack
-function Stack:push(item)
-	table.insert(self.items, item)
 end
 
 -- Pop an item from the stack
@@ -59,20 +55,6 @@ end
 -- Check if the stack is empty
 function Stack:isEmpty()
 	return #self.items == 0
-end
-
--- Get the size of the stack
-function Stack:size()
-	return #self.items
-end
-
--- Peek at the top item on the stack without removing it
-function Stack:peek()
-	if self:isEmpty() then
-		error("Stack is empty")
-	else
-		return self.items[#self.items]
-	end
 end
 
 -- Add a new print method to the Stack metatable

@@ -62,7 +62,7 @@ end
 function EditorGroup:getLatestBuffer(winid)
 	local stack = self:getGroup(winid)
 	if stack then
-		return stack:getTop()
+		return stack:peek()
 	else
 		return nil
 	end

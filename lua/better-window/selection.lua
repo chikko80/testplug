@@ -4,6 +4,7 @@ local api = vim.api
 
 local M = {}
 
+
 function M.on_select(bufnr)
 	local linenr = vim.api.nvim_win_get_cursor(0)[1]
 	local bufnumbers = api.nvim_buf_get_var(bufnr, "bufnumbers")
@@ -22,7 +23,9 @@ function M.show_popup()
 	-- bufnumbers to bufnames
 	local bufnames = {}
 	local bufnumbers = {}
-	for _, item in pairs(editors_per_win.items) do
+
+	for i = #editors_per_win.items, 1, -1 do
+		local item = editors_per_win.items[i]
 		-- exclude current buffer
 		if item ~= buf_id then
 			local bufname = vim.api.nvim_buf_get_name(item):match("([^/]+)$")
