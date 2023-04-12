@@ -30,7 +30,6 @@ local function split(command)
 end
 
 local function add_buffer()
-    print("add_buffer")
     local winId = vim.api.nvim_get_current_win()
     local bufId = vim.api.nvim_get_current_buf()
     windows_manager:addEditor(winId, bufId)

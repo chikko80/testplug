@@ -26,4 +26,20 @@ function Node:removeChild(childNode)
 	end
 end
 
+function Node:getIndexInParent()
+	for i, child in ipairs(self.parent.children) do
+		if child == self then
+			return i
+		end
+	end
+	return nil
+end
+
+
+function Node:insertChild(childNode, index)
+    childNode.parent = self
+    childNode.isVertical = childNode.isVertical or false
+    table.insert(self.children, index, childNode)
+end
+
 return Node

@@ -58,8 +58,9 @@ function PaneTree:splitVertical(winId, newWinId, bufnr)
 	local newNode = Node.new(newEditorGroup, nil)
 
 	if node.parent.isVertical == true then
-		-- If the parent is already a vertical split type, just add the new node as a sibling
-		node.parent:addChild(newNode, true)
+		-- If the parent is already a vertical split type, insert the new node as a sibling after the active node
+		local index = node:getIndexInParent()
+		node.parent:insertChild(newNode, index + 1)
 	else
 		local newParentNode = Node.new(nil, node.parent)
 		newParentNode.isVertical = true
@@ -89,8 +90,9 @@ function PaneTree:splitHorizontal(winId, newWinId, bufnr)
 	local newNode = Node.new(newEditorGroup, nil)
 
 	if node.parent.isVertical == false then
-		-- If the parent is already a horizontal split type, just add the new node as a sibling
-		node.parent:addChild(newNode, false)
+		-- If the parent is already a horizontal split type, insert the new node as a sibling after the active node
+		local index = node:getIndexInParent()
+		node.parent:insertChild(newNode, index + 1)
 	else
 		local newParentNode = Node.new(nil, node.parent)
 		newParentNode.isVertical = false
