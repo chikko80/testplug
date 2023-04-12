@@ -23,14 +23,14 @@ end
 -- Peek at the top item on the stack without removing it
 function Stack:peek()
 	if self:isEmpty() then
-		error("Stack is empty")
+        return nil
 	else
 		return self.items[#self.items]
 	end
 end
 
 -- Add a buffer to the stack (modified)
-function Stack:addBufferToStack(bufnr)
+function Stack:addEditorToStack(bufnr)
 	local index = self:indexOf(bufnr)
 
 	if index then
