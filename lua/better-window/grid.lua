@@ -38,16 +38,12 @@ end
 function GridLayout:splitPane(win_id, command)
 	local srcRow, srcCol = self:getPanePosition(win_id)
 	if command == "vsplit" then
-		if self.columns < 2 then
-			self:resizeGrid(self.rows, self.columns + 1)
-		end
+		self:resizeGrid(self.rows, self.columns + 1)
 		local newRow = srcRow
 		local newCol = srcCol + 1
 		return newRow, newCol
 	elseif command == "split" then
-		if self.rows < 2 then
-			self:resizeGrid(self.rows + 1, self.columns)
-		end
+		self:resizeGrid(self.rows + 1, self.columns)
 		local newRow = srcRow + 1
 		local newCol = srcCol
 		return newRow, newCol

@@ -15,12 +15,12 @@ local function setup()
 	vim.cmd("command! BetterWinMoveSplitVertical lua require('better-window').split('vsplit')")
 	vim.cmd("command! BetterWinMoveSplitHorizontal lua require('better-window').split('split')")
 
-	-- vim.cmd([[
-	--      augroup LayoutTracker
-	--        autocmd!
-	--        autocmd BufWinEnter * lua require('better-window').update_layout()
-	--      augroup END
-	--    ]])
+	vim.cmd([[
+	     augroup LayoutTracker
+	       autocmd!
+	       autocmd BufEnter * lua require('better-window').load_buffer()
+	     augroup END
+	   ]])
 
 	-- init new grid with new group
 	windows_manager = WindowManager.new()
@@ -30,6 +30,14 @@ end
 local function split(command)
 	windows_manager:split(command)
 end
+
+local function load_buffer()
+    print('load buffer')
+	local currentBufId = vim.api.nvim_get_current_buf()
+	local currentWinId = vim.api.nvim_get_current_win()
+	windows_manager:add_buffer(currentWinId, currentBufId)
+end
+
 --
 -- local function update_layout(event)
 -- 	-- get list of open buffers
@@ -122,13 +130,19 @@ end
 --
 local function debug()
 	print("Layout " .. windows_manager.gridLayout.rows, windows_manager.gridLayout.columns)
-	print(vim.inspect(windows_manager))
+	-- print(vim.inspect(windows_manager))
+	for row = 1, windows_manager.gridLayout.rows do
+		for col = 1, windows_manager.gridLayout.columns do
+			print("Stack - Row: " .. row .. " Col: " .. col .. vim.inspect(windows_manager.gridLayout.grid[row][col]))
+		end
+	end
 end
 
 return {
 	-- update_layout = update_layout,
 	-- remove_buffer = remove_buffer,
 	split = split,
+	load_buffer = load_buffer,
 	-- move = move,
 	setup = setup,
 	debug = debug,

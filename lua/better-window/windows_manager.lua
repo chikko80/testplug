@@ -40,6 +40,14 @@ function WindowManager:move(direction)
 	end
 end
 
+function WindowManager:add_buffer(winnr, bufnr)
+	local row, col = self.gridLayout:getPanePosition(winnr)
+	if row and col then
+		local editorGroup = self.gridLayout.grid[row][col]
+		editorGroup:addEditor(bufnr)
+	end
+end
+
 function WindowManager:remove_buffer()
 	local currentWinId = vim.api.nvim_get_current_win()
 	local row, col = self.gridLayout:getPanePosition(currentWinId)
@@ -49,14 +57,17 @@ function WindowManager:remove_buffer()
 end
 
 function WindowManager:split(command)
+	local currentBufId = vim.api.nvim_get_current_buf()
 	local currentWinId = vim.api.nvim_get_current_win()
 	local newRow, newCol = self.gridLayout:splitPane(currentWinId, command)
 
 	vim.api.nvim_command(command)
 
 	local newWinId = vim.api.nvim_get_current_win()
+	print(currentWinId, newWinId)
 
 	local newEditorGroup = EditorGroup.new(newWinId)
+	newEditorGroup:addEditor(currentBufId)
 	self.gridLayout:addEditorGroup(newEditorGroup, newRow, newCol)
 end
 

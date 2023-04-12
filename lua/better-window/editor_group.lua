@@ -1,5 +1,6 @@
 local Stack = require("better-window.stack") -- Replace with the path to your Stack class
 
+
 -- EditorGroup
 local EditorGroup = {}
 EditorGroup.__index = EditorGroup
