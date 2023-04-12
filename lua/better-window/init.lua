@@ -1,6 +1,5 @@
 -- better-window.nvim.lua
 -- require("better-window.tabufline.lazyload")
-
 local WindowManager = require("better-window.windows_manager")
 
 local windows_manager
@@ -15,27 +14,26 @@ local function setup()
 	vim.cmd("command! BetterWinMoveSplitVertical lua require('better-window').split('vsplit')")
 	vim.cmd("command! BetterWinMoveSplitHorizontal lua require('better-window').split('split')")
 
-	vim.cmd([[
-	     augroup LayoutTracker
-	       autocmd!
-	       autocmd BufEnter * lua require('better-window').load_buffer()
-	     augroup END
-	   ]])
+	-- vim.cmd([[
+	--      augroup LayoutTracker
+	--        autocmd!
+	--        autocmd VimEnter * lua require('better-window').init()
+	--      augroup END
+ --   ]])
 
 	-- init new grid with new group
 	windows_manager = WindowManager.new()
-	print(vim.inspect(windows_manager))
 end
 
 local function split(command)
 	windows_manager:split(command)
 end
 
-local function load_buffer()
-	local currentBufId = vim.api.nvim_get_current_buf()
-	local currentWinId = vim.api.nvim_get_current_win()
-	windows_manager:add_buffer(currentWinId, currentBufId)
-end
+-- local function init()
+--     -- if windows_manager.paneTree:isEmpty() then
+--         windows_manager:split("vsplit")
+--     -- end
+-- end
 
 --
 -- local function update_layout(event)
@@ -114,7 +112,7 @@ end
 -- 	vim.cmd("normal! zz")
 -- end
 --
--- local function remove_buffer()
+-- local function remove_buffer(
 -- 	local current_window = vim.api.nvim_get_current_win()
 --
 -- 	editor_group:removeBufferFromGroup(current_window)
@@ -129,7 +127,9 @@ end
 --
 local function debug()
 	-- print("Layout " .. windows_manager.TreeLayout.rows, windows_manager.TreeLayout.columns)
-	print(vim.inspect(windows_manager))
+
+	-- print(vim.inspect(windows_manager))
+	print(vim.inspect(windows_manager.paneTree:printTree()))
 	-- for row = 1, windows_manager.TreeLayout.rows do
 	-- 	for col = 1, windows_manager.TreeLayout.columns do
 	-- 		print("Stack - Row: " .. row .. " Col: " .. col .. vim.inspect(windows_manager.TreeLayout.grid[row][col]))
@@ -141,7 +141,6 @@ return {
 	-- update_layout = update_layout,
 	-- remove_buffer = remove_buffer,
 	split = split,
-	load_buffer = load_buffer,
 	-- move = move,
 	setup = setup,
 	debug = debug,
