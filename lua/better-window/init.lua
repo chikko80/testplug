@@ -32,6 +32,7 @@ local function split(command)
 end
 
 local function load_buffer()
+    print('load buffer')
 	local currentBufId = vim.api.nvim_get_current_buf()
 	local currentWinId = vim.api.nvim_get_current_win()
 	windows_manager:add_buffer(currentWinId, currentBufId)
@@ -128,13 +129,13 @@ end
 -- end
 --
 local function debug()
-	-- print("Layout " .. windows_manager.TreeLayout.rows, windows_manager.TreeLayout.columns)
-	print(vim.inspect(windows_manager))
-	-- for row = 1, windows_manager.TreeLayout.rows do
-	-- 	for col = 1, windows_manager.TreeLayout.columns do
-	-- 		print("Stack - Row: " .. row .. " Col: " .. col .. vim.inspect(windows_manager.TreeLayout.grid[row][col]))
-	-- 	end
-	-- end
+	print("Layout " .. windows_manager.gridLayout.rows, windows_manager.gridLayout.columns)
+	-- print(vim.inspect(windows_manager))
+	for row = 1, windows_manager.gridLayout.rows do
+		for col = 1, windows_manager.gridLayout.columns do
+			print("Stack - Row: " .. row .. " Col: " .. col .. vim.inspect(windows_manager.gridLayout.grid[row][col]))
+		end
+	end
 end
 
 return {
