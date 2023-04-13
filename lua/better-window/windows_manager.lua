@@ -57,11 +57,12 @@ function WindowManager:move_into_editor_group(direction)
 		return
 	end
 
-	local target_win = utils.find_closest_pane(current_win_id, direction)
-	local target_node = self.paneTree:findNodeByWinId(target_win)
-    if not target_node then
-        return
-    end
+	local target_node = self.paneTree:findClosestNodeInDirection(self.paneTree.rootNode, current_node, direction)
+	-- local target_win = utils.find_closest_pane(current_win_id, direction)
+	-- local target_node = self.paneTree:findNodeByWinId(target_win)
+	if not target_node then
+		return
+	end
 
 	-- Move the editor from the current group to the target group
 	current_node.editorGroup:removeEditor(current_buf_id)

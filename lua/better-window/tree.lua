@@ -162,6 +162,48 @@ function PaneTree:splitHorizontal(winId, newWinId, bufnr)
 	end
 end
 
+
+function PaneTree:findClosestNodeInDirection(root, current, direction)
+  if not current or not current.parent then
+    return nil
+  end
+
+  local function findSiblingInDirection(node, dir)
+    local parent = node.parent
+    if not parent or not parent.children then
+      return nil
+    end
+
+    local currentIndex = node:getIndexInParent()
+
+    if dir == "left" or dir == "up" then
+      return parent.children[currentIndex - 1]
+    elseif dir == "right" or dir == "down" then
+      return parent.children[currentIndex + 1]
+    end
+
+    return nil
+  end
+
+  local sibling = findSiblingInDirection(current, direction)
+
+  if sibling then
+    -- Navigate deeper into the sibling based on the direction
+    while sibling.children and #sibling.children > 0 do
+      if direction == "left" or direction == "right" then
+        sibling = sibling.children[#sibling.children] -- The last child for left direction
+      elseif direction == "up" or direction == "down" then
+        sibling = sibling.children[1] -- The first child for up direction
+      end
+    end
+
+    return sibling
+  else
+    -- No sibling found, move up the tree and try again
+    return self:findClosestNodeInDirection(root, current.parent, direction)
+  end
+end
+
 function PaneTree:printTree()
 	self:_printTreeRecursive(self.rootNode, 0)
 end
