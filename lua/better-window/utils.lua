@@ -70,169 +70,39 @@ function calculate_distance(center1, center2)
 end
 
 function find_closest_pane(current_pane, direction)
-    local panes = get_layout()
-    local closest_pane = nil
-    local min_distance = math.huge
-    local max_alignment = -1
-    local perfect_aligned_pane_found = false
+	local panes = get_layout()
+	local closest_pane = nil
+	local min_distance = math.huge
+	local min_pane_id = math.huge
 
-    local current_pane_center = { get_center(current_pane) }
+	for _, pane in ipairs(panes) do
+		if pane == current_pane then
+			goto continue
+		end
 
-    for _, pane in ipairs(panes) do
-        if pane == current_pane then
-            goto continue
-        end
+		local current_pane_center = { get_center(current_pane) }
+		local pane_center = { get_center(pane) }
 
-        local pane_center = { get_center(pane) }
-        local distance = calculate_distance(current_pane_center, pane_center)
-        local angle = calculate_angle(current_pane_center, pane_center)
+		if
+			direction == "left" and pane_center[1] < current_pane_center[1]
+			or direction == "right" and pane_center[1] > current_pane_center[1]
+			or direction == "up" and pane_center[2] < current_pane_center[2]
+			or direction == "down" and pane_center[2] > current_pane_center[2]
+		then
+			local distance = calculate_distance(current_pane_center, pane_center)
 
-        local alignment = 0
-        if direction == "left" then
-            alignment = math.cos(angle + math.pi)
-        elseif direction == "right" then
-            alignment = math.cos(angle)
-        elseif direction == "up" then
-            alignment = math.cos(angle + 0.5 * math.pi)
-        elseif direction == "down" then
-            alignment = math.cos(angle - 0.5 * math.pi)
-        end
+			if distance < min_distance or (distance == min_distance and pane < min_pane_id) then
+				min_distance = distance
+				min_pane_id = pane
+				closest_pane = pane
+			end
+		end
 
-        if alignment == 1 then
-            perfect_aligned_pane_found = true
-        end
+		::continue::
+	end
 
-        if
-            direction == "left" and pane_center[1] < current_pane_center[1]
-            or direction == "right" and pane_center[1] > current_pane_center[1]
-            or direction == "up" and pane_center[2] < current_pane_center[2]
-            or direction == "down" and pane_center[2] > current_pane_center[2]
-        then
-            if not perfect_aligned_pane_found or alignment == 1 then
-                if distance < min_distance or (distance == min_distance and alignment > max_alignment) then
-                    min_distance = distance
-                    max_alignment = alignment
-                    closest_pane = pane
-                end
-            end
-        end
-
-        ::continue::
-    end
-
-    return closest_pane
+	return closest_pane
 end
-
-
--- function find_closest_pane(current_pane, direction)
--- 	local panes = get_layout()
--- 	local closest_pane = nil
--- 	local min_distance = math.huge
--- 	local max_alignment = -1
---
--- 	local current_pane_center = { get_center(current_pane) }
---
--- 	for _, pane in ipairs(panes) do
--- 		if pane == current_pane then
--- 			goto continue
--- 		end
---
--- 		local pane_center = { get_center(pane) }
--- 		local distance = calculate_distance(current_pane_center, pane_center)
--- 		local angle = calculate_angle(current_pane_center, pane_center)
---
--- 		local alignment = 0
--- 		if direction == "left" then
--- 			alignment = math.cos(angle + math.pi)
--- 		elseif direction == "right" then
--- 			alignment = math.cos(angle)
--- 		elseif direction == "up" then
--- 			alignment = math.cos(angle + 0.5 * math.pi)
--- 		elseif direction == "down" then
--- 			alignment = math.cos(angle - 0.5 * math.pi)
--- 		end
---
--- 		print("Current Pane: ", current_pane, vim.inspect(current_pane_center))
--- 		print("Pane: ", pane, vim.inspect(pane_center), string.format("Distance: %.2f", distance), angle, alignment)
---
--- 		if
--- 			direction == "left" and pane_center[1] < current_pane_center[1]
--- 			or direction == "right" and pane_center[1] > current_pane_center[1]
--- 			or direction == "up" and pane_center[2] < current_pane_center[2]
--- 			or direction == "down" and pane_center[2] > current_pane_center[2]
--- 		then
--- 			if distance < min_distance or (distance == min_distance and alignment > max_alignment) then
--- 				min_distance = distance
--- 				max_alignment = alignment
--- 				closest_pane = pane
--- 			end
--- 		end
---
--- 		::continue::
--- 	end
---
--- 	return closest_pane
--- end
-
--- function find_closest_pane(current_pane, direction)
--- 	local panes = get_layout()
--- 	local closest_pane = nil
--- 	local min_distance = math.huge
--- 	local deviation_percent = 5
---
--- 	local cursor_pos = vim.api.nvim_win_get_cursor(current_pane)
--- 	local cursor_x = cursor_pos[2]
--- 	local cursor_y = cursor_pos[1]
---
--- 	for _, pane in ipairs(panes) do
--- 		if pane == current_pane then
--- 			goto continue
--- 		end
---
--- 		local current_pane_center = { get_center(current_pane) }
--- 		local pane_center = { get_center(pane) }
---
--- 		if
--- 			direction == "left" and pane_center[1] < current_pane_center[1]
--- 			or direction == "right" and pane_center[1] > current_pane_center[1]
--- 			or direction == "up" and pane_center[2] < current_pane_center[2]
--- 			or direction == "down" and pane_center[2] > current_pane_center[2]
--- 		then
--- 			local distance = calculate_distance(current_pane_center, pane_center)
--- 			local rounded_distance = math.floor(distance + 0.5)
---
--- 			print("Current Pane: ", current_pane, vim.inspect(current_pane_center))
--- 			print("Pane: ", pane, vim.inspect(pane_center))
--- 			print(pane, string.format("Distance: %.2f", distance))
---
--- 			if rounded_distance < min_distance then
--- 				min_distance = rounded_distance
--- 				closest_pane = pane
--- 			elseif rounded_distance == min_distance then
--- 				local pane_cursor_pos = vim.api.nvim_win_get_cursor(pane)
--- 				local pane_cursor_x = pane_cursor_pos[2]
--- 				local pane_cursor_y = pane_cursor_pos[1]
---
--- 				local distance_deviation = math.abs(min_distance - rounded_distance) / min_distance * 100
--- 				if distance_deviation <= deviation_percent then
--- 					if direction == "left" or direction == "right" then
--- 						if math.abs(cursor_y - pane_cursor_y) < math.abs(cursor_y - cursor_pos[1]) then
--- 							closest_pane = pane
--- 						end
--- 					elseif direction == "up" or direction == "down" then
--- 						if math.abs(cursor_x - pane_cursor_x) < math.abs(cursor_x - cursor_pos[2]) then
--- 							closest_pane = pane
--- 						end
--- 					end
--- 				end
--- 			end
--- 		end
---
--- 		::continue::
--- 	end
---
--- 	return closest_pane
--- end
 
 return {
 	get_layout = get_layout,
