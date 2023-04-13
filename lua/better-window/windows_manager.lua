@@ -18,7 +18,6 @@ function WindowManager:addEditor(winId, bufId)
 	if not node then
 		return
 	end
-
 	node.editorGroup:addEditor(bufId)
 end
 
@@ -30,18 +29,26 @@ function WindowManager:RemoveEditor(winId, bufId)
 
 	local last_editor_in_group = node.editorGroup:removeEditor(bufId)
 	if last_editor_in_group then
-		vim.api.nvim_buf_delete(bufId, { force = true })
+		vim.api.nvim_win_close(winId, true)
 	end
 end
 
--- self.paneTree:removeNode(winId)
--- vim.api.nvim_win_close(winId, true)
+function WindowManager:RemoveGroup(winId)
+	if self.paneTree:isLastGroup() then
+        print("Can't remove last group")
+        return
+	end
+
+	self.paneTree:removeNode(winId)
+	vim.api.nvim_win_close(winId, true)
+end
 
 function WindowManager:split(command)
 	local old_buf_id = vim.api.nvim_get_current_buf()
 	local old_win_id = vim.api.nvim_get_current_win()
 	vim.api.nvim_command(command)
 	local newWinId = vim.api.nvim_get_current_win()
+    print(newWinId)
 
 	if command == "vsplit" then
 		self.paneTree:splitVertical(old_win_id, newWinId, old_buf_id)

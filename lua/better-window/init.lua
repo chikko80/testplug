@@ -1,4 +1,7 @@
 -- better-window.nvim.lua
+
+
+
 -- require("better-window.tabufline.lazyload")
 local WindowManager = require("better-window.windows_manager")
 
@@ -12,6 +15,7 @@ local function setup()
 	vim.cmd("command! BetterWinSplitVertical lua require('better-window').split('vsplit')")
 	vim.cmd("command! BetterWinSplitHorizontal lua require('better-window').split('split')")
 	vim.cmd("command! BetterWinRemoveFromGroup lua require('better-window').remove_from_group()")
+	vim.cmd("command! BetterWinRemoveGroup lua require('better-window').remove_group()")
 
 	vim.cmd("command! BetterWinSelection lua require('better-window.selection').show_popup()")
 
@@ -19,6 +23,7 @@ local function setup()
 	     augroup LayoutTracker
 	       autocmd!
 	       autocmd BufEnter * lua require('better-window').add_to_group()
+	       autocmd WinClosed * lua require('better-window').remove_group()
 	     augroup END
    ]])
 
@@ -26,10 +31,7 @@ local function setup()
 	windows_manager = WindowManager.new()
 end
 
-local function split(command)
-	windows_manager:split(command)
-end
-
+-- editor operations
 local function add_to_group()
 	local winId = vim.api.nvim_get_current_win()
 	local bufId = vim.api.nvim_get_current_buf()
@@ -40,6 +42,17 @@ local function remove_from_group()
 	local winId = vim.api.nvim_get_current_win()
 	local bufId = vim.api.nvim_get_current_buf()
 	windows_manager:RemoveEditor(winId, bufId)
+end
+
+-- tree operations
+local function split(command)
+	windows_manager:split(command)
+end
+
+local function remove_group()
+	local winId = vim.api.nvim_get_current_win()
+    print('remove_group: '.. winId )
+	windows_manager:RemoveGroup(winId)
 end
 
 local function test(dir)
@@ -157,6 +170,7 @@ end
 
 return {
 	-- update_layout = update_layout,
+	remove_group = remove_group,
 	remove_from_group = remove_from_group,
 	split = split,
 	add_to_group = add_to_group,

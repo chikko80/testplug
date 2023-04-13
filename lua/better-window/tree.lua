@@ -22,6 +22,10 @@ function PaneTree:isEmpty()
 	return #self.rootNode.children == 0
 end
 
+function PaneTree:isLastGroup()
+	return #self.rootNode.children == 1
+end
+
 function PaneTree:findNodeByWinId(winId)
 	if #self.rootNode.children == 0 then
 		return self.rootNode
@@ -50,32 +54,48 @@ end
 function PaneTree:removeNode(winId)
 	local node = self:findNodeByWinId(winId)
 	if not node or node == self.rootNode then
-		error("Invalid node or root node cannot be removed")
+		return
 	end
 
 	-- Remove the node from its parent's children list
 	node.parent:removeChild(node)
 
-	-- If the parent node has only one child left, merge the remaining child with the parent
-	if #node.parent.children == 1 then
-		local remainingChild = node.parent.children[1]
-		local grandParent = node.parent.parent
+	local parent = node.parent
 
-		-- If the parent is the root node, set the remaining child as the new root
-		if node.parent == self.rootNode then
-			self.rootNode = remainingChild
-			remainingChild.parent = nil
-		else
-			-- Otherwise, replace the parent node with the remaining child in the grandparent's children list
-			remainingChild.parent = grandParent
-			for i, child in ipairs(grandParent.children) do
-				if child == node.parent then
-					grandParent.children[i] = remainingChild
-					break
-				end
+	-- If the parent node is the root node and has only one remaining child,
+	-- we don't need to do anything else, because the root node should always have at least one child.
+	if parent == self.rootNode and #parent.children == 1 then
+		return
+	end
+
+	-- If the parent node is not the root node and has only one remaining child,
+	-- remove the parent node and attach the remaining child to its grandparent.
+	if self.rootNode and #parent.children == 1 then
+		local remainingChild = parent.children[1]
+		local grandParent = parent.parent
+
+		-- Remove the parent from the grandparent's children list
+		for i, child in ipairs(grandParent.children) do
+			if child == parent then
+				table.remove(grandParent.children, i)
+				break
 			end
 		end
+
+		-- Attach the remaining child to the grandparent
+		remainingChild.parent = grandParent
+		table.insert(grandParent.children, remainingChild)
+
+		-- Copy the layout and size properties from the parent to the remaining child
+		remainingChild.layout = parent.layout
+		remainingChild.size = parent.size
 	end
+
+	-- If the parent node has no remaining children, recursively remove the parent node
+	if #parent.children == 0 then
+		self:removeNode(parent.winId)
+	end
+
 end
 
 function PaneTree:splitVertical(winId, newWinId, bufnr)
