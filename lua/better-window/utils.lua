@@ -28,6 +28,7 @@ local function get_layout() -- just a list of window ids
 
 			-- Exclude windows with a buffer name matching "NvimTree"
 			if not bufname or not bufname:match("^NvimTree") then
+                -- print(vim.inspect(window_config))
 				table.insert(valid_winid, win_id)
 			end
 		end
@@ -36,7 +37,7 @@ local function get_layout() -- just a list of window ids
 end
 
 local function get_layout_diff(old_layout, new_layout)
-    -- present in the old_layout but not in the new_layout 
+	-- present in the old_layout but not in the new_layout
 	local difference = {}
 	local list2_set = {}
 

@@ -57,7 +57,7 @@ function WindowManager:split(command)
 	local old_win_id = vim.api.nvim_get_current_win()
 	vim.api.nvim_command(command)
 	local newWinId = vim.api.nvim_get_current_win()
-	print(newWinId)
+	-- print(newWinId)
 
 	if command == "vsplit" then
 		self.paneTree:splitVertical(old_win_id, newWinId, old_buf_id)

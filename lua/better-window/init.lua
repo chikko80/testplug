@@ -14,15 +14,14 @@ local function setup()
 	vim.cmd("command! BetterWinSplitHorizontal lua require('better-window').split('split')")
 	vim.cmd("command! BetterWinRemoveFromGroup lua require('better-window').remove_from_group()")
 	vim.cmd("command! BetterWinRemoveGroup lua require('better-window').remove_group()")
-
 	vim.cmd("command! BetterWinSelection lua require('better-window.selection').show_popup()")
 
 	vim.cmd([[
     augroup LayoutTracker
         autocmd!
         autocmd BufEnter * lua require('better-window').add_to_group()
-        autocmd WinClosed * lua require('better-window').remove_group()
-        autocmd BufDelete * lua require('better-window').remove_group()
+        " autocmd WinClosed * lua require('better-window').remove_group()
+        autocmd WinClosed, WinLeave, BufWinLeave, QuitPre * lua require('better-window').remove_group()
     augroup END
     ]])
 
@@ -49,13 +48,13 @@ local function split(command)
 
 	-- save new layout
 	windows_manager.last_layout = utils.get_layout()
-	windows_manager.paneTree:printTree()
+	-- windows_manager.paneTree:printTree()
 end
 
 local function remove_group()
 	local new_layout = utils.get_layout()
-    -- print(#windows_manager.last_layout , #new_layout)
 	-- if user didn't change layout, do nothing
+    -- print(#windows_manager.last_layout , #new_layout)
 	if #windows_manager.last_layout == #new_layout then
 		return
 	end
@@ -63,12 +62,13 @@ local function remove_group()
 
 	-- remove everything that is not in the new layout
 	for _, value in ipairs(utils.get_layout_diff(windows_manager.last_layout, new_layout)) do
+        print("Removing: " .. value)
 		windows_manager:RemoveGroup(value)
 	end
 
 	-- save new layout
 	windows_manager.last_layout = new_layout
-	windows_manager.paneTree:printTree()
+	-- windows_manager.paneTree:printTree()
 end
 
 local function test(dir)
@@ -77,7 +77,7 @@ local function test(dir)
 end
 
 local function debug()
-	-- print(vim.inspect(windows_manager))
+	print(#windows_manager.last_layout, #utils.get_layout())
 	windows_manager.paneTree:printTree()
 end
 
