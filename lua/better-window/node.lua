@@ -35,11 +35,46 @@ function Node:getIndexInParent()
 	return nil
 end
 
-
 function Node:insertChild(childNode, index)
-    childNode.parent = self
-    childNode.isVertical = childNode.isVertical or false
-    table.insert(self.children, index, childNode)
+	childNode.parent = self
+	childNode.isVertical = childNode.isVertical or false
+	table.insert(self.children, index, childNode)
+end
+
+function Node:getNextSibling()
+	-- If the node doesn't have a parent, it has no siblings
+	if not self.parent then
+		return nil
+	end
+
+	local siblings = self.parent.children
+	local currentIndex = self:getIndexInParent()
+
+	-- If the current node is the last child, it has no next sibling
+	if currentIndex == #siblings then
+		return nil
+	end
+
+	-- Return the next sibling
+	return siblings[currentIndex + 1]
+end
+
+function Node:getPrevSibling()
+	-- If the node doesn't have a parent, it has no siblings
+	if not self.parent then
+		return nil
+	end
+
+	local siblings = self.parent.children
+	local currentIndex = self:getIndexInParent()
+
+	-- If the current node is the first child, it has no previous sibling
+	if currentIndex == 1 then
+		return nil
+	end
+
+	-- Return the previous sibling
+	return siblings[currentIndex - 1]
 end
 
 return Node

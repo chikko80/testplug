@@ -7,8 +7,10 @@ local windows_manager
 
 local function setup()
 	-- Create commands
-	-- vim.cmd("command! BetterWinMoveLeft lua require('better-window').move('l')")
-	-- vim.cmd("command! BetterWinMoveRight lua require('better-window').move('r')")
+	vim.cmd("command! BetterWinMoveLeft lua require('better-window').move('left')")
+	vim.cmd("command! BetterWinMoveRight lua require('better-window').move('right')")
+	vim.cmd("command! BetterWinMoveUp lua require('better-window').move('up')")
+	vim.cmd("command! BetterWinMoveDown lua require('better-window').move('down')")
 
 	vim.cmd("command! BetterWinSplitVertical lua require('better-window').split('vsplit')")
 	vim.cmd("command! BetterWinSplitHorizontal lua require('better-window').split('split')")
@@ -26,6 +28,10 @@ local function setup()
 
 	-- init new grid with new group
 	windows_manager = WindowManager.new()
+end
+
+local function move(direction)
+    windows_manager:move_into_editor_group(direction)
 end
 
 -- editor operations
@@ -84,12 +90,9 @@ return {
 	remove_from_group = remove_from_group,
 	split = split,
 	add_to_group = add_to_group,
-	-- move = move,
+	move = move,
 	setup = setup,
 	debug = debug,
 	test = test,
 	-- editor_group = editor_group,
 }
-
---
--- bufremove.unshow_in_window(old_win_id)

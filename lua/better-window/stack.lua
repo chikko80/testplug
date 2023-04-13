@@ -1,5 +1,4 @@
 -- Stack class
-
 local Stack = {}
 Stack.__index = Stack
 

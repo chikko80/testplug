@@ -1,15 +1,3 @@
-local function get_list_index(list, target)
-	local index = nil
-
-	for i, v in ipairs(list) do
-		if v == target then
-			index = i
-			break
-		end
-	end
-	return index
-end
-
 local function get_layout() -- just a list of window ids
 	local current_tab = vim.api.nvim_get_current_tabpage()
 
@@ -28,7 +16,7 @@ local function get_layout() -- just a list of window ids
 
 			-- Exclude windows with a buffer name matching "NvimTree"
 			if not bufname or not bufname:match("^NvimTree") then
-                -- print(vim.inspect(window_config))
+				-- print(vim.inspect(window_config))
 				table.insert(valid_winid, win_id)
 			end
 		end
@@ -56,13 +44,7 @@ local function get_layout_diff(old_layout, new_layout)
 	return difference
 end
 
-local function get_open_buffer_per_win(win_id)
-	return vim.api.nvim_win_get_buf(win_id)
-end
-
 return {
-	get_list_index = get_list_index,
 	get_layout = get_layout,
 	get_layout_diff = get_layout_diff,
-	get_open_buffer_per_win = get_open_buffer_per_win,
 }
