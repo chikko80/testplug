@@ -21,20 +21,25 @@ function EditorGroup:removeEditor(bufnr)
 	self.stack:removeEditorFromStack(bufnr)
 
 	local peek_stack = self.stack:peek()
+	-- close win if it was the last buffer in the group
 	if not peek_stack then
-		return true -- return true if this was the last editor in the group
+		vim.api.nvim_win_close(self.win_id, true)
 	end
 
 	if bufnr == self.activeEditor then
 		self:setActiveEditor(peek_stack) -- set active editor to the top of the stack
 	end
-	return false
+end
+
+function EditorGroup:restoreCursor(pos)
+	vim.api.nvim_win_set_cursor(self.win_id, pos)
 end
 
 function EditorGroup:setActiveEditor(bufnr)
 	self.activeEditor = bufnr
 	if bufnr then
 		vim.api.nvim_win_set_buf(self.win_id, bufnr)
+		vim.api.nvim_set_current_win(self.win_id)
 	end
 end
 

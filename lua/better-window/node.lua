@@ -11,6 +11,10 @@ function Node.new(editorGroup, parent)
 	return self
 end
 
+function Node:isWrapper()
+	return #self.children > 0 and self.editorGroup == nil
+end
+
 function Node:addChild(childNode, isVertical)
 	childNode.parent = self
 	childNode.isVertical = isVertical
@@ -55,8 +59,13 @@ function Node:getNextSibling()
 		return nil
 	end
 
-	-- Return the next sibling
-	return siblings[currentIndex + 1]
+	-- Get the next sibling and find the first non-wrapper node
+	local nextSibling = siblings[currentIndex + 1]
+	while nextSibling:isWrapper() do
+		nextSibling = nextSibling.children[1]
+	end
+
+	return nextSibling
 end
 
 function Node:getPrevSibling()
@@ -73,8 +82,13 @@ function Node:getPrevSibling()
 		return nil
 	end
 
-	-- Return the previous sibling
-	return siblings[currentIndex - 1]
+	-- Get the previous sibling and find the last non-wrapper node
+	local prevSibling = siblings[currentIndex - 1]
+	while prevSibling:isWrapper() do
+		prevSibling = prevSibling.children[#prevSibling.children]
+	end
+
+	return prevSibling
 end
 
 return Node

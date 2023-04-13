@@ -17,7 +17,7 @@ lets say we have a file 1
 If i split vertical this file i get
 | 1 | 2 | 
 
-my cursor will be on File 2 now, if i split again vertical i get
+my cursor will be on File 2 now, if i split again vertical i get                                                                                                 
 | 1 | 2 | 3 | 
 
 my cursor will be on File 3 now, if i split again vertical i get

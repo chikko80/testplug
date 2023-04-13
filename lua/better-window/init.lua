@@ -1,4 +1,4 @@
--- better-window.nvim.lua
+-- bangleetter-window.nvim.lua
 -- require("better-window.tabufline.lazyload")
 local WindowManager = require("better-window.windows_manager")
 local utils = require("better-window.utils")
