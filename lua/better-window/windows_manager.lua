@@ -48,7 +48,6 @@ function WindowManager:RemoveGroup(winId)
 		return
 	end
 
-	print("remove_group: " .. winId)
 	self.paneTree:removeNode(winId)
 end
 

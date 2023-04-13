@@ -20,8 +20,7 @@ local function setup()
     augroup LayoutTracker
         autocmd!
         autocmd BufEnter * lua require('better-window').add_to_group()
-        " autocmd WinClosed * lua require('better-window').remove_group()
-        autocmd WinClosed, WinLeave, BufWinLeave, QuitPre * lua require('better-window').remove_group()
+        autocmd WinClosed * lua vim.schedule_wrap(require('better-window').remove_group)()
     augroup END
     ]])
 
@@ -54,7 +53,6 @@ end
 local function remove_group()
 	local new_layout = utils.get_layout()
 	-- if user didn't change layout, do nothing
-    -- print(#windows_manager.last_layout , #new_layout)
 	if #windows_manager.last_layout == #new_layout then
 		return
 	end
@@ -62,7 +60,6 @@ local function remove_group()
 
 	-- remove everything that is not in the new layout
 	for _, value in ipairs(utils.get_layout_diff(windows_manager.last_layout, new_layout)) do
-        print("Removing: " .. value)
 		windows_manager:RemoveGroup(value)
 	end
 
