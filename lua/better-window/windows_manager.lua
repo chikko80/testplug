@@ -1,15 +1,18 @@
 local Node = require("better-window.node")
 local EditorGroup = require("better-window.editor_group")
 local PaneTree = require("better-window.tree")
+local utils = require("better-window.utils")
 
 local WindowManager = {}
 WindowManager.__index = WindowManager
+WindowManager.last_layout = nil
 
 function WindowManager.new()
 	local self = setmetatable({}, WindowManager)
 
 	local currentWinId = vim.api.nvim_get_current_win()
 	self.paneTree = PaneTree.new(currentWinId)
+	self.last_layout = utils.get_layout() -- single window on start
 	return self
 end
 
@@ -34,13 +37,19 @@ function WindowManager:RemoveEditor(winId, bufId)
 end
 
 function WindowManager:RemoveGroup(winId)
-	if self.paneTree:isLastGroup() then
-        print("Can't remove last group")
-        return
+	local node = self.paneTree:findNodeByWinId(winId)
+	-- check if node in tree
+	if not node then
+		return
 	end
 
+	if self.paneTree:isLastGroup() then
+		print("Can't remove last group")
+		return
+	end
+
+	print("remove_group: " .. winId)
 	self.paneTree:removeNode(winId)
-	vim.api.nvim_win_close(winId, true)
 end
 
 function WindowManager:split(command)
@@ -48,7 +57,7 @@ function WindowManager:split(command)
 	local old_win_id = vim.api.nvim_get_current_win()
 	vim.api.nvim_command(command)
 	local newWinId = vim.api.nvim_get_current_win()
-    print(newWinId)
+	print(newWinId)
 
 	if command == "vsplit" then
 		self.paneTree:splitVertical(old_win_id, newWinId, old_buf_id)
