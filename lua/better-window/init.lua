@@ -6,18 +6,19 @@ local windows_manager
 
 local function setup()
 	-- Create commands
-	vim.cmd("command! BetterWinMoveLeft lua require('better-window').move('l')")
-	vim.cmd("command! BetterWinMoveRight lua require('better-window').move('r')")
-	vim.cmd("command! BetterWinRemoveFromStack lua require('better-window').remove_buffer()")
-	vim.cmd("command! BetterWinSelection lua require('better-window.selection').show_popup()")
+	-- vim.cmd("command! BetterWinMoveLeft lua require('better-window').move('l')")
+	-- vim.cmd("command! BetterWinMoveRight lua require('better-window').move('r')")
 
-	vim.cmd("command! BetterWinMoveSplitVertical lua require('better-window').split('vsplit')")
-	vim.cmd("command! BetterWinMoveSplitHorizontal lua require('better-window').split('split')")
+	vim.cmd("command! BetterWinSplitVertical lua require('better-window').split('vsplit')")
+	vim.cmd("command! BetterWinSplitHorizontal lua require('better-window').split('split')")
+	vim.cmd("command! BetterWinRemoveFromGroup lua require('better-window').remove_from_group()")
+
+	vim.cmd("command! BetterWinSelection lua require('better-window.selection').show_popup()")
 
 	vim.cmd([[
 	     augroup LayoutTracker
 	       autocmd!
-	       autocmd BufEnter * lua require('better-window').add_buffer()
+	       autocmd BufEnter * lua require('better-window').add_to_group()
 	     augroup END
    ]])
 
@@ -29,10 +30,21 @@ local function split(command)
 	windows_manager:split(command)
 end
 
-local function add_buffer()
-    local winId = vim.api.nvim_get_current_win()
-    local bufId = vim.api.nvim_get_current_buf()
-    windows_manager:addEditor(winId, bufId)
+local function add_to_group()
+	local winId = vim.api.nvim_get_current_win()
+	local bufId = vim.api.nvim_get_current_buf()
+	windows_manager:addEditor(winId, bufId)
+end
+
+local function remove_from_group()
+	local winId = vim.api.nvim_get_current_win()
+	local bufId = vim.api.nvim_get_current_buf()
+	windows_manager:RemoveEditor(winId, bufId)
+end
+
+local function test(dir)
+	local winId = vim.api.nvim_get_current_win()
+	print(windows_manager.paneTree:getClosestPane(winId, dir))
 end
 
 -- local function init()
@@ -118,7 +130,7 @@ end
 -- 	vim.cmd("normal! zz")
 -- end
 --
--- local function remove_buffer(
+-- local function remove_from_group(
 -- 	local current_window = vim.api.nvim_get_current_win()
 --
 -- 	editor_group:removeBufferFromGroup(current_window)
@@ -145,12 +157,13 @@ end
 
 return {
 	-- update_layout = update_layout,
-	-- remove_buffer = remove_buffer,
+	remove_from_group = remove_from_group,
 	split = split,
-	add_buffer = add_buffer,
+	add_to_group = add_to_group,
 	-- move = move,
 	setup = setup,
 	debug = debug,
+	test = test,
 	-- editor_group = editor_group,
 }
 

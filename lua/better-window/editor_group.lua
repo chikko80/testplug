@@ -1,6 +1,5 @@
 local Stack = require("better-window.stack") -- Replace with the path to your Stack class
 
-
 -- EditorGroup
 local EditorGroup = {}
 EditorGroup.__index = EditorGroup
@@ -19,15 +18,17 @@ function EditorGroup:addEditor(bufnr)
 end
 
 function EditorGroup:removeEditor(bufnr)
-	local index = self.stack:indexOf(bufnr)
-	if index then
-		table.remove(self.stack.items, index)
+	self.stack:removeEditorFromStack(bufnr)
+
+	local peek_stack = self.stack:peek()
+	if not peek_stack then
+		return true -- return true if this was the last editor in the group
 	end
 
-	if bufnr == self.activebufnr then
-		self.stack:pop() -- remove from stack
-		self:setActiveEditor(self.stack:peek()) -- set active editor to the top of the stack
+	if bufnr == self.activeEditor then
+		self:setActiveEditor(peek_stack) -- set active editor to the top of the stack
 	end
+	return false
 end
 
 function EditorGroup:setActiveEditor(bufnr)

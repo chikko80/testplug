@@ -47,6 +47,37 @@ function PaneTree:_findNodeByWinId(node, winId)
 	return nil
 end
 
+function PaneTree:removeNode(winId)
+	local node = self:findNodeByWinId(winId)
+	if not node or node == self.rootNode then
+		error("Invalid node or root node cannot be removed")
+	end
+
+	-- Remove the node from its parent's children list
+	node.parent:removeChild(node)
+
+	-- If the parent node has only one child left, merge the remaining child with the parent
+	if #node.parent.children == 1 then
+		local remainingChild = node.parent.children[1]
+		local grandParent = node.parent.parent
+
+		-- If the parent is the root node, set the remaining child as the new root
+		if node.parent == self.rootNode then
+			self.rootNode = remainingChild
+			remainingChild.parent = nil
+		else
+			-- Otherwise, replace the parent node with the remaining child in the grandparent's children list
+			remainingChild.parent = grandParent
+			for i, child in ipairs(grandParent.children) do
+				if child == node.parent then
+					grandParent.children[i] = remainingChild
+					break
+				end
+			end
+		end
+	end
+end
+
 function PaneTree:splitVertical(winId, newWinId, bufnr)
 	local node = self:findNodeByWinId(winId)
 	if not node then

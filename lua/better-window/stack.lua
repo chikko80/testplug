@@ -52,6 +52,13 @@ function Stack:pop()
 	end
 end
 
+function Stack:removeEditorFromStack(bufnr)
+    local index = self:indexOf(bufnr)
+    if index then
+        table.remove(self.items, index)
+    end
+end
+
 -- Check if the stack is empty
 function Stack:isEmpty()
 	return #self.items == 0
