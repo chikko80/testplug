@@ -43,7 +43,8 @@ function WindowManager:RemoveGroup(winId)
 		return
 	end
 
-	if self.paneTree:isLastGroup() then
+    -- if last children and its a vertical split so a single col with a single row
+	if self.paneTree:isLastGroup() and self.paneTree.rootNode.children[1].isVertical then
 		print("Can't remove last group")
 		return
 	end
