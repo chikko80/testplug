@@ -1,9 +1,8 @@
 -- bangleetter-window.nvim.lua
 -- require("better-window.tabufline.lazyload")
-local WindowManager = require("better-window.windows_manager")
-local utils = require("better-window.utils")
+local TabManager = require("better-window.tab_manager")
 
-local windows_manager
+local tab_manager
 
 local function setup()
 	-- Create commands
@@ -21,63 +20,69 @@ local function setup()
 	vim.cmd([[
     augroup LayoutTracker
         autocmd!
+
+        autocmd TabNew * lua require('better-window').add_tab()
+        autocmd TabClosed * lua require('better-window').remove_tab()
+
         autocmd BufEnter * lua require('better-window').add_to_group()
         autocmd WinClosed * lua vim.schedule_wrap(require('better-window').remove_group)()
     augroup END
     ]])
 
 	-- init new grid with new group
-	windows_manager = WindowManager.new()
+	tab_manager = TabManager.new()
+end
+
+local function add_tab()
+	local tabId = vim.api.nvim_get_current_tabpage()
+	tab_manager:add_tab(tabId)
+end
+
+local function remove_tab()
+	local tabId = vim.api.nvim_get_current_tabpage()
+	tab_manager:remove_tab(tabId)
 end
 
 local function move(direction)
-	windows_manager:move_into_editor_group(direction)
+	local tabId = vim.api.nvim_get_current_tabpage()
+	tab_manager:move_into_editor_group(tabId, direction)
 end
 
 -- editor operations
 local function add_to_group()
-	local winId, bufId = utils.get_win_and_buf_id()
-	windows_manager:addEditor(winId, bufId)
+	local tabId = vim.api.nvim_get_current_tabpage()
+	tab_manager:add_to_group(tabId)
 end
 
 local function remove_from_group()
-	local winId, bufId = utils.get_win_and_buf_id()
-	windows_manager:RemoveEditor(winId, bufId)
+	local tabId = vim.api.nvim_get_current_tabpage()
+	tab_manager:remove_from_group(tabId)
 end
 
 -- tree operations
 local function split(command)
-	windows_manager:split(command)
-
-	-- save new layout
-	windows_manager.last_layout = utils.get_layout()
+	local tabId = vim.api.nvim_get_current_tabpage()
+	tab_manager:split(tabId, command)
 end
 
 local function remove_group()
-	local new_layout = utils.get_layout()
-	-- if user didn't change layout, do nothing
-	if #windows_manager.last_layout == #new_layout then
-		return
-	end
-
-	-- remove everything that is not in the new layout
-	for _, value in ipairs(utils.get_layout_diff(windows_manager.last_layout, new_layout)) do
-		windows_manager:RemoveGroup(value)
-	end
-
-	-- save new layout
-	windows_manager.last_layout = new_layout
+	local tabId = vim.api.nvim_get_current_tabpage()
+	tab_manager:remove_group(tabId)
 end
 
 local function debug()
-	windows_manager.paneTree:printTree()
+	local tabId = vim.api.nvim_get_current_tabpage()
+	tab_manager:debug(tabId)
 end
 
 local function get_windows_manager()
-	return windows_manager
+	local tabId = vim.api.nvim_get_current_tabpage()
+	return tab_manager:get_windows_manager(tabId)
 end
 
 return {
+	add_tab = add_tab,
+	remove_tab = remove_tab,
 	remove_group = remove_group,
 	remove_from_group = remove_from_group,
 	split = split,

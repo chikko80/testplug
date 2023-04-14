@@ -1,5 +1,8 @@
 ## Disclaimer
-This plugin is highly experimental and currently under development. Vertical-split support only!
+This plugin is highly experimental.
+
+
+Should support tabs but not recommended and guaranteed
 
 # 🪟 better-window.nvim for Neovim
 
