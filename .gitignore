@@ -27,6 +27,7 @@ my cursor will be on File 2 now, if i split again vertical i get
 | 1 | 2 | 3 | 
 
 my cursor will be on File 3 now, if i split again vertical i get
+
 | 1 | 2 | 3 | 4 |
 
 i think you get the idea, as long as i split vertical the the panes will be side by side (we add rows)
