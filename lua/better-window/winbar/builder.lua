@@ -1,5 +1,5 @@
 local utils = require("better-window.utils")
-local tabmanager = require("better-window.tabmanager")
+local main = require("better-window")
 
 -- local tabufline = require("better-window.tabufline.modules")
 local devicons_present, devicons = pcall(require, "nvim-web-devicons")
@@ -11,7 +11,7 @@ vim.api.nvim_set_hl(0, "WinBarModified", { bg = "#dedede", fg = "#ff3838" })
 function M.build()
 	local win_ids = utils.get_layout()
 
-    local tabId = vim.api.nvim_get_current_tabpage()
+    print(main.get_windows_manager())
 
 	local tabline_string = ""
 	for _, win_id in ipairs(win_ids) do
