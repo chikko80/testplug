@@ -50,6 +50,7 @@ end
 function WindowManager:move_into_editor_group(direction)
 	local current_win_id = vim.api.nvim_get_current_win()
 	local current_buf_id = vim.api.nvim_get_current_buf()
+
 	local old_cursor_position = vim.api.nvim_win_get_cursor(current_win_id)
 
 	local current_node = self.paneTree:findNodeByWinId(current_win_id)

@@ -9,7 +9,6 @@ function EditorGroup.new(win_id)
 	self.win_id = win_id
 	self.activeEditor = nil
 	self.stack = Stack.new() -- Use Stack to manage editors within the group
-
 	return self
 end
 

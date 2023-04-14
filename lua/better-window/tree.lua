@@ -52,49 +52,77 @@ function PaneTree:_findNodeByWinId(node, winId)
 end
 
 function PaneTree:removeNode(winId)
+	print("Starting tree")
+	self:printTree()
 	local node = self:findNodeByWinId(winId)
 	if not node or node == self.rootNode then
 		return
 	end
 
-	-- Remove the node from its parent's children list
-	node.parent:removeChild(node)
-
 	local parent = node.parent
+
+	-- Remove the node from its parent's children list
+	print(#parent.children)
+	parent:removeChild(node)
+	print("Remove")
+	self:printTree()
+	print(#parent.children)
 
 	-- If the parent node is the root node and has only one remaining child,
 	-- we don't need to do anything else, because the root node should always have at least one child.
 	if parent == self.rootNode and #parent.children == 1 then
+		print("returned")
 		return
 	end
 
-	-- If the parent node is not the root node and has only one remaining child,
-	-- remove the parent node and attach the remaining child to its grandparent.
-	if self.rootNode and #parent.children == 1 then
-		local remainingChild = parent.children[1]
-		local grandParent = parent.parent
+	local grand_parent = parent.parent
 
-		-- Remove the parent from the grandparent's children list
-		for i, child in ipairs(grandParent.children) do
-			if child == parent then
-				table.remove(grandParent.children, i)
-				break
+	-- No child is left, clear recursively
+	if #parent.children == 0 then
+
+		print("no child left")
+		grand_parent:removeChild(parent)
+
+	-- Merge the remaining sibling node with the parent if the parent has the same split type
+	elseif #parent.children == 1 then
+		local remaining_sibling = parent.children[1]
+
+		if remaining_sibling:isWrapper() then
+			print("is wrapper")
+			if grand_parent.isVertical == remaining_sibling.isVertical then
+				print("is vertical", #remaining_sibling.children)
+				for _, child in ipairs(remaining_sibling.children) do
+					grand_parent:addChild(child, grand_parent.isVertical)
+				end
+				grand_parent:removeChild(parent)
+			else
+				print("out")
+			end
+		else
+			print("is no wrapper")
+			print(grand_parent.isVertical, grand_parent == self.rootNode)
+			print(remaining_sibling.isVertical)
+
+			if grand_parent.isVertical == remaining_sibling.isVertical then
+				print("is vertical", #remaining_sibling.children)
+
+				print("adding child")
+				grand_parent:addChild(remaining_sibling, grand_parent.isVertical)
+
+				print("add")
+				self:printTree()
+
+				grand_parent:removeChild(parent)
+			else
+				print("out")
 			end
 		end
-
-		-- Attach the remaining child to the grandparent
-		remainingChild.parent = grandParent
-		table.insert(grandParent.children, remainingChild)
-
-		-- Copy the layout and size properties from the parent to the remaining child
-		remainingChild.layout = parent.layout
-		remainingChild.size = parent.size
+	else
+		print("end ")
 	end
 
-	-- If the parent node has no remaining children, recursively remove the parent node
-	if #parent.children == 0 then
-		self:removeNode(parent.winId)
-	end
+	print("final tree")
+	self:printTree()
 end
 
 function PaneTree:splitVertical(winId, newWinId, bufnr)
@@ -156,8 +184,8 @@ function PaneTree:splitHorizontal(winId, newWinId, bufnr)
 		end
 
 		-- Add the original node and the new Node as child nodes to the newParentNode
-		newParentNode:addChild(node, false)
-		newParentNode:addChild(newNode, false)
+		newParentNode:addChild(node, true) -- keep the vertical = true since we always consider a single pane like vertical pane
+		newParentNode:addChild(newNode, true)
 	end
 end
 
@@ -169,7 +197,7 @@ function PaneTree:_printTreeRecursive(node, level)
 	local indent = string.rep("  ", level)
 
 	if node.editorGroup then
-		print(indent .. "EditorGroup (win_id=" .. node.editorGroup.win_id .. ")")
+		print(indent .. "EditorGroup (win_id=" .. node.editorGroup.win_id .. ") ", node.isVertical)
 		if not node.editorGroup.stack:isEmpty() then
 			local buffers_str = indent .. "  Buffers: "
 			for i, bufnr in ipairs(node.editorGroup.stack.items) do
