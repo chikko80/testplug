@@ -39,8 +39,7 @@ local function add_tab()
 end
 
 local function remove_tab()
-	local tabId = vim.api.nvim_get_current_tabpage()
-	tab_manager:remove_tab(tabId)
+	tab_manager:remove_tab()
 end
 
 local function move(direction)

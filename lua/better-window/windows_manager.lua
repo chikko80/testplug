@@ -3,7 +3,6 @@ local utils = require("better-window.utils")
 
 local WindowManager = {}
 WindowManager.__index = WindowManager
-WindowManager.last_layout = nil
 
 function WindowManager.new()
 	local self = setmetatable({}, WindowManager)

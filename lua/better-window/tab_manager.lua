@@ -6,6 +6,7 @@ TabManager.__index = TabManager
 
 function TabManager.new()
 	local self = setmetatable({}, TabManager)
+	self.tabs = utils.get_tabs()
 	self.windows_manager = {} -- Initialize windows_manager
 
 	local currentTabId = vim.api.nvim_get_current_tabpage()
@@ -17,14 +18,21 @@ end
 
 function TabManager:add_tab(tabId)
 	self.windows_manager[tabId] = WindowManager.new()
+
+	-- update tabs
+	self.tabs = utils.get_tabs()
 end
 
-function TabManager:remove_tab(tabId)
-	if not self.windows_manager[tabId] then
-		return
+function TabManager:remove_tab()
+	local new_tab_list = utils.get_tabs()
+
+    -- detect the removed tab/s
+	for _, tabId in ipairs(utils.get_list_diff(self.tabs, new_tab_list)) do
+		self.windows_manager[tabId] = nil
 	end
 
-	self.windows_manager[tabId] = nil
+	-- update tabs
+	self.tabs = new_tab_list
 end
 
 function TabManager:move_into_editor_group(tabId, direction)
@@ -78,7 +86,7 @@ function TabManager:remove_group(tabId)
 	end
 
 	-- remove everything that is not in the new layout
-	for _, value in ipairs(utils.get_layout_diff(self.windows_manager[tabId].last_layout, new_layout)) do
+	for _, value in ipairs(utils.get_list_diff(self.windows_manager[tabId].last_layout, new_layout)) do
 		self.windows_manager[tabId]:RemoveGroup(value)
 	end
 

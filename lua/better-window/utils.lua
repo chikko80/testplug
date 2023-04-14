@@ -1,8 +1,12 @@
-
 local function get_win_and_buf_id()
-    local winId = vim.api.nvim_get_current_win()
-    local bufId = vim.api.nvim_get_current_buf()
-    return winId, bufId
+	local winId = vim.api.nvim_get_current_win()
+	local bufId = vim.api.nvim_get_current_buf()
+	return winId, bufId
+end
+
+local function get_tabs()
+	local tabs = vim.api.nvim_list_tabpages()
+	return tabs
 end
 
 local function get_layout() -- just a list of window ids
@@ -31,7 +35,7 @@ local function get_layout() -- just a list of window ids
 	return valid_winid
 end
 
-local function get_layout_diff(old_layout, new_layout)
+local function get_list_diff(old_layout, new_layout)
 	-- present in the old_layout but not in the new_layout
 	local difference = {}
 	local list2_set = {}
@@ -172,8 +176,9 @@ function calculate_distance(center1, center2)
 end
 
 return {
+	get_tabs = get_tabs,
 	get_layout = get_layout,
-	get_layout_diff = get_layout_diff,
+	get_list_diff = get_list_diff,
 	find_closest_pane = find_closest_pane,
 	get_win_and_buf_id = get_win_and_buf_id,
 }
