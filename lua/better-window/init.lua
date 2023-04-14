@@ -1,5 +1,6 @@
 -- bangleetter-window.nvim.lua
 -- require("better-window.tabufline.lazyload")
+require("better-window.winbar")
 local TabManager = require("better-window.tab_manager")
 
 local tab_manager
