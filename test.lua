@@ -1,6 +1,5 @@
 local utils = require("better-window.utils")
 
-
 function get_center(win_id)
 	local pos = vim.api.nvim_win_get_position(win_id)
 	local pos_x = pos[2]
@@ -58,7 +57,9 @@ function test()
 		-- print("Window " .. i .. " position: ", pos[1], pos[2])
 
 		-- print(get_center(win))
-		print(vim.inspect(find_closest_pane(utils.get_layout(), win, "right")))
+		-- print(vim.inspect(find_closest_pane(utils.get_layout(), win, "right")))
+		print(win, "Right: ", utils.get_edge_center(win, "right"))
+		print(win, "Left: ", utils.get_edge_center(win, "left"))
 	end
 end
 

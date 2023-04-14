@@ -44,55 +44,76 @@ local function get_layout_diff(old_layout, new_layout)
 	return difference
 end
 
-function calculate_angle(center1, center2)
-	local dx = center2[1] - center1[1]
-	local dy = center2[2] - center1[2]
-	return math.atan2(dy, dx)
-end
-
-function get_center(win_id)
-	local pos = vim.api.nvim_win_get_position(win_id)
-	local pos_x = pos[2]
-	local pos_y = pos[1]
-	local width = vim.api.nvim_win_get_width(win_id)
-	local height = vim.api.nvim_win_get_height(win_id)
-
-	local center_x = pos_x + (width / 2)
-	local center_y = pos_y + (height / 2)
-
-	return center_x, center_y
-end
-
-function calculate_distance(center1, center2)
-	local dx = center2[1] - center1[1]
-	local dy = center2[2] - center1[2]
-	return math.sqrt(dx * dx + dy * dy)
-end
-
-function find_closest_pane(current_pane, direction)
-	local panes = get_layout()
+--- Find the closest pane in the specified direction from the current pane.
+--
+-- This function takes the current pane and the direction as input and finds the closest pane in that direction.
+-- The input direction can be one of the following: "left", "right", "up", or "down".
+--
+-- @param panes List of panes represented by winIds.
+-- @param current_pane The current pane from which the search is initiated.
+-- @param direction The direction to search for the closest pane. Can be one of the following: "left", "right", "up", or "down".
+-- @return The closest pane in the specified direction from the current pane.
+--
+-- Example usage:
+-- local closest_pane = find_closest_pane(current_pane, "down")
+function find_closest_pane(panes, current_pane, direction)
 	local closest_pane = nil
 	local min_distance = math.huge
+	local min_cursor_distance = math.huge
 	local min_pane_id = math.huge
+	local opposite_direction = {
+		left = "right",
+		right = "left",
+		up = "down",
+		down = "up",
+	}
 
+	-- Calculate the edge center coordinates of the current pane in the specified direction
+	local current_pane_edge_center = { get_edge_center(current_pane, direction) }
+
+	-- Get the current cursor position in the current pane
+	local cursor_position = vim.api.nvim_win_get_cursor(current_pane)
+	local cursor_x, cursor_y = cursor_position[2], cursor_position[1]
+
+	-- Iterate through all the panes in the layout
 	for _, pane in ipairs(panes) do
+		-- Skip the current pane
 		if pane == current_pane then
 			goto continue
 		end
 
-		local current_pane_center = { get_center(current_pane) }
-		local pane_center = { get_center(pane) }
+		-- Calculate the edge center coordinates of the candidate pane in the opposite direction
+		local pane_edge_center = { get_edge_center(pane, opposite_direction[direction]) }
+		local same_axis = false
 
-		if
-			direction == "left" and pane_center[1] < current_pane_center[1]
-			or direction == "right" and pane_center[1] > current_pane_center[1]
-			or direction == "up" and pane_center[2] < current_pane_center[2]
-			or direction == "down" and pane_center[2] > current_pane_center[2]
-		then
-			local distance = calculate_distance(current_pane_center, pane_center)
+		if direction == "left" or direction == "right" then
+			same_axis = are_coordinates_same(current_pane_edge_center[1], pane_edge_center[1])
+		elseif direction == "up" or direction == "down" then
+			same_axis = are_coordinates_same(current_pane_edge_center[2], pane_edge_center[2])
+		end
 
-			if distance < min_distance or (distance == min_distance and pane < min_pane_id) then
-				min_distance = distance
+		-- If the candidate pane is on the same axis, calculate the distances
+		if same_axis then
+			-- Calculate the distance between the current pane and the candidate pane
+			local distance = calculate_distance(current_pane_edge_center, pane_edge_center)
+			local rounded_distance = math.floor(distance + 0.5)
+
+			-- Calculate the cursor position distance between the current pane and the candidate pane
+			local cursor_distance = calculate_distance({ cursor_x, cursor_y }, pane_edge_center)
+			local rounded_cursor_distance = math.floor(cursor_distance + 0.5)
+
+			-- Update the closest pane if the conditions are met
+			if
+				(rounded_distance < min_distance)
+				or (rounded_distance == min_distance and rounded_cursor_distance < min_cursor_distance)
+				or (
+					rounded_distance == min_distance
+					and rounded_cursor_distance == min_cursor_distance
+					and pane < min_pane_id
+				)
+			then
+				min_distance = rounded_distance
+				min_cursor_distance = rounded_cursor_distance
 				min_pane_id = pane
 				closest_pane = pane
 			end
@@ -102,6 +123,45 @@ function find_closest_pane(current_pane, direction)
 	end
 
 	return closest_pane
+end
+
+function are_coordinates_same(coord1, coord2)
+	local distance = math.abs(coord1 - coord2)
+	return distance <= 3 -- give more to properly work on complex layouts
+end
+
+function get_edge_center(win_id, direction)
+	local pos = vim.api.nvim_win_get_position(win_id)
+	local pos_x = pos[2]
+	local pos_y = pos[1]
+	local width = vim.api.nvim_win_get_width(win_id)
+	local height = vim.api.nvim_win_get_height(win_id)
+
+	if direction == "left" then
+		local center_x = pos_x
+		local center_y = pos_y + (height / 2)
+		return center_x, center_y
+	elseif direction == "right" then
+		local center_x = pos_x + width
+		local center_y = pos_y + (height / 2)
+		return center_x, center_y
+	elseif direction == "up" then
+		local center_x = pos_x + (width / 2)
+		local center_y = pos_y
+		return center_x, center_y
+	elseif direction == "down" then
+		local center_x = pos_x + (width / 2)
+		local center_y = pos_y + height
+		return center_x, center_y
+	else
+		error("Invalid direction. Must be 'left', 'right', 'up', or 'down'.")
+	end
+end
+
+function calculate_distance(center1, center2)
+	local dx = center2[1] - center1[1]
+	local dy = center2[2] - center1[2]
+	return math.sqrt(dx * dx + dy * dy)
 end
 
 return {
