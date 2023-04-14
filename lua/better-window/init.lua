@@ -31,19 +31,17 @@ local function setup()
 end
 
 local function move(direction)
-    windows_manager:move_into_editor_group(direction)
+	windows_manager:move_into_editor_group(direction)
 end
 
 -- editor operations
 local function add_to_group()
-	local winId = vim.api.nvim_get_current_win()
-	local bufId = vim.api.nvim_get_current_buf()
+	local winId, bufId = utils.get_win_and_buf_id()
 	windows_manager:addEditor(winId, bufId)
 end
 
 local function remove_from_group()
-	local winId = vim.api.nvim_get_current_win()
-	local bufId = vim.api.nvim_get_current_buf()
+	local winId, bufId = utils.get_win_and_buf_id()
 	windows_manager:RemoveEditor(winId, bufId)
 end
 
@@ -53,7 +51,6 @@ local function split(command)
 
 	-- save new layout
 	windows_manager.last_layout = utils.get_layout()
-	-- windows_manager.paneTree:printTree()
 end
 
 local function remove_group()
@@ -62,7 +59,6 @@ local function remove_group()
 	if #windows_manager.last_layout == #new_layout then
 		return
 	end
-	-- local winId = vim.api.nvim_get_current_win()
 
 	-- remove everything that is not in the new layout
 	for _, value in ipairs(utils.get_layout_diff(windows_manager.last_layout, new_layout)) do
@@ -71,21 +67,17 @@ local function remove_group()
 
 	-- save new layout
 	windows_manager.last_layout = new_layout
-	-- windows_manager.paneTree:printTree()
-end
-
-local function test(dir)
-	local winId = vim.api.nvim_get_current_win()
-	print(windows_manager.paneTree:getClosestPane(winId, dir))
 end
 
 local function debug()
-	print(#windows_manager.last_layout, #utils.get_layout())
 	windows_manager.paneTree:printTree()
 end
 
+local function get_windows_manager()
+	return windows_manager
+end
+
 return {
-	-- update_layout = update_layout,
 	remove_group = remove_group,
 	remove_from_group = remove_from_group,
 	split = split,
@@ -93,6 +85,5 @@ return {
 	move = move,
 	setup = setup,
 	debug = debug,
-	test = test,
-	-- editor_group = editor_group,
+	get_windows_manager = get_windows_manager,
 }

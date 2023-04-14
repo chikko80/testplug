@@ -14,6 +14,14 @@ function WindowManager.new()
 	return self
 end
 
+function WindowManager:getEditorGroup(winId)
+	local node = self.paneTree:findNodeByWinId(winId)
+	if not node then
+		return
+	end
+	return node.editorGroup.stack
+end
+
 function WindowManager:addEditor(winId, bufId)
 	local node = self.paneTree:findNodeByWinId(winId)
 	if not node then
@@ -27,13 +35,11 @@ function WindowManager:RemoveEditor(winId, bufId)
 	if not node then
 		return
 	end
-
 	node.editorGroup:removeEditor(bufId)
 end
 
 function WindowManager:RemoveGroup(winId)
 	local node = self.paneTree:findNodeByWinId(winId)
-	-- check if node in tree
 	if not node then
 		return
 	end

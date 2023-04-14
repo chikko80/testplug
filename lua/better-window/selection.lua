@@ -1,9 +1,8 @@
-local editor_group = require("better-window").editor_group
+local init = require("better-window")
 
 local api = vim.api
 
 local M = {}
-
 
 function M.on_select(bufnr)
 	local linenr = vim.api.nvim_win_get_cursor(0)[1]
@@ -18,7 +17,7 @@ end
 function M.show_popup()
 	local win_id = vim.api.nvim_get_current_win()
 	local buf_id = vim.api.nvim_get_current_buf()
-	local editors_per_win = editor_group:getGroup(win_id)
+	local editors_per_win = init.get_windows_manager():getEditorGroup(win_id)
 
 	-- bufnumbers to bufnames
 	local bufnames = {}

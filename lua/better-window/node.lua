@@ -45,50 +45,5 @@ function Node:insertChild(childNode, index)
 	table.insert(self.children, index, childNode)
 end
 
-function Node:getNextSibling()
-	-- If the node doesn't have a parent, it has no siblings
-	if not self.parent then
-		return nil
-	end
-
-	local siblings = self.parent.children
-	local currentIndex = self:getIndexInParent()
-
-	-- If the current node is the last child, it has no next sibling
-	if currentIndex == #siblings then
-		return nil
-	end
-
-	-- Get the next sibling and find the first non-wrapper node
-	local nextSibling = siblings[currentIndex + 1]
-	while nextSibling:isWrapper() do
-		nextSibling = nextSibling.children[1]
-	end
-
-	return nextSibling
-end
-
-function Node:getPrevSibling()
-	-- If the node doesn't have a parent, it has no siblings
-	if not self.parent then
-		return nil
-	end
-
-	local siblings = self.parent.children
-	local currentIndex = self:getIndexInParent()
-
-	-- If the current node is the first child, it has no previous sibling
-	if currentIndex == 1 then
-		return nil
-	end
-
-	-- Get the previous sibling and find the last non-wrapper node
-	local prevSibling = siblings[currentIndex - 1]
-	while prevSibling:isWrapper() do
-		prevSibling = prevSibling.children[#prevSibling.children]
-	end
-
-	return prevSibling
-end
 
 return Node

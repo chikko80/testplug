@@ -1,3 +1,10 @@
+
+local function get_win_and_buf_id()
+    local winId = vim.api.nvim_get_current_win()
+    local bufId = vim.api.nvim_get_current_buf()
+    return winId, bufId
+end
+
 local function get_layout() -- just a list of window ids
 	local current_tab = vim.api.nvim_get_current_tabpage()
 
@@ -168,4 +175,5 @@ return {
 	get_layout = get_layout,
 	get_layout_diff = get_layout_diff,
 	find_closest_pane = find_closest_pane,
+	get_win_and_buf_id = get_win_and_buf_id,
 }

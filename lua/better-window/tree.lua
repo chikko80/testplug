@@ -78,6 +78,7 @@ function PaneTree:_removeNode(node)
 		self:_removeNode(parent)
 
 	-- Merge the remaining child with the grand_parent
+	-- HACK: this is a bit hacky, we should probably insert/replace by index rather by appending as child
 	elseif #parent.children == 1 then
 		local remaining_sibling = parent.children[1]
 
@@ -112,6 +113,7 @@ function PaneTree:splitVertical(winId, newWinId, bufnr)
 		local index = node:getIndexInParent()
 		node.parent:insertChild(newNode, index + 1)
 	else
+		-- If the parent is horizontal and we split vertical, we need to build a new wrapper node and append the children to it
 		local newParentNode = Node.new(nil, node.parent)
 		newParentNode.isVertical = true
 
@@ -144,6 +146,7 @@ function PaneTree:splitHorizontal(winId, newWinId, bufnr)
 		local index = node:getIndexInParent()
 		node.parent:insertChild(newNode, index + 1)
 	else
+		-- If the parent is vertical and we split horizontal, we need to build a new wrapper node and append the children to it
 		local newParentNode = Node.new(nil, node.parent)
 		newParentNode.isVertical = false
 
