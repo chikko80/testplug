@@ -2,18 +2,12 @@
 local Node = {}
 Node.__index = Node
 
-local function generateUniqueId()
-	-- Generate a random 10-digit number
-	return math.random(100000000000000000, 999999999999999999)
-end
-
 function Node.new(editorGroup, parent)
 	local self = setmetatable({}, Node)
 	self.editorGroup = editorGroup
 	self.parent = parent
 	self.isVertical = true
 	self.children = {}
-	self.id = generateUniqueId()
 	return self
 end
 

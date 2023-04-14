@@ -52,77 +52,49 @@ function PaneTree:_findNodeByWinId(node, winId)
 end
 
 function PaneTree:removeNode(winId)
-	print("Starting tree")
-	self:printTree()
 	local node = self:findNodeByWinId(winId)
 	if not node or node == self.rootNode then
 		return
 	end
+	self:_removeNode(node)
+end
 
+function PaneTree:_removeNode(node)
 	local parent = node.parent
 
 	-- Remove the node from its parent's children list
-	print(#parent.children)
 	parent:removeChild(node)
-	print("Remove")
-	self:printTree()
-	print(#parent.children)
 
 	-- If the parent node is the root node and has only one remaining child,
 	-- we don't need to do anything else, because the root node should always have at least one child.
 	if parent == self.rootNode and #parent.children == 1 then
-		print("returned")
 		return
 	end
 
 	local grand_parent = parent.parent
 
-	-- No child is left, clear recursively
+	-- No child is left in parent, that happens if we removed the last editorgroup from a wrapper node
 	if #parent.children == 0 then
+		self:_removeNode(parent)
 
-		print("no child left")
-		grand_parent:removeChild(parent)
-
-	-- Merge the remaining sibling node with the parent if the parent has the same split type
+	-- Merge the remaining child with the grand_parent
 	elseif #parent.children == 1 then
 		local remaining_sibling = parent.children[1]
 
 		if remaining_sibling:isWrapper() then
-			print("is wrapper")
-			if grand_parent.isVertical == remaining_sibling.isVertical then
-				print("is vertical", #remaining_sibling.children)
-				for _, child in ipairs(remaining_sibling.children) do
-					grand_parent:addChild(child, grand_parent.isVertical)
-				end
-				grand_parent:removeChild(parent)
-			else
-				print("out")
+			-- if the child is a wrapper, it has its own children, so we need to merge them into the grand_parent
+			for _, child in ipairs(remaining_sibling.children) do
+				grand_parent:addChild(child, grand_parent.isVertical)
 			end
+			grand_parent:removeChild(parent)
 		else
-			print("is no wrapper")
-			print(grand_parent.isVertical, grand_parent == self.rootNode)
-			print(remaining_sibling.isVertical)
-
-			if grand_parent.isVertical == remaining_sibling.isVertical then
-				print("is vertical", #remaining_sibling.children)
-
-				print("adding child")
-				grand_parent:addChild(remaining_sibling, grand_parent.isVertical)
-
-				print("add")
-				self:printTree()
-
-				grand_parent:removeChild(parent)
-			else
-				print("out")
-			end
+			-- if the child is a single editorgroup, we just need to add it to the grand_parent
+			grand_parent:addChild(remaining_sibling, grand_parent.isVertical)
+			grand_parent:removeChild(parent)
 		end
 	else
-		print("end ")
+		-- there are more than one child, so we don't, just remove the sibling from the group
 	end
-
-	print("final tree")
-	self:printTree()
 end
 
 function PaneTree:splitVertical(winId, newWinId, bufnr)
