@@ -15,6 +15,7 @@ function M.on_select(bufnr)
 end
 
 function M.show_popup()
+
 	local win_id = vim.api.nvim_get_current_win()
 	local buf_id = vim.api.nvim_get_current_buf()
 	local editors_per_win = init.get_windows_manager():getEditorGroup(win_id)

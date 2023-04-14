@@ -1,9 +1,10 @@
 -- bangleetter-window.nvim.lua
 -- require("better-window.tabufline.lazyload")
--- require("better-window.winbar.init")
+require("better-window.winbar.autocommands")
 local TabManager = require("better-window.tab_manager")
-
 local tab_manager
+
+local builder = require("better-window.winbar.builder")
 
 local function setup()
 	-- Create commands
@@ -32,6 +33,7 @@ local function setup()
 
 	-- init new grid with new group
 	tab_manager = TabManager.new()
+	builder.init(tab_manager)
 end
 
 local function add_tab()
