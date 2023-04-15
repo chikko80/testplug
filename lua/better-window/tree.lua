@@ -6,14 +6,14 @@ local EditorGroup = require("better-window.editor_group")
 local PaneTree = {}
 PaneTree.__index = PaneTree
 
-function PaneTree.new(win_id)
+function PaneTree.new(win_id, win_nr)
 	local self = setmetatable({}, PaneTree)
 
 	-- create root node
 	self.rootNode = Node.new(nil, nil)
 
 	-- add init window to the tree
-	local init_node = Node.new(EditorGroup.new(win_id), self.rootNode)
+	local init_node = Node.new(EditorGroup.new(win_id, win_nr), self.rootNode)
 	self.rootNode:addChild(init_node, true)
 	return self
 end
@@ -24,6 +24,31 @@ end
 
 function PaneTree:isLastGroup()
 	return #self.rootNode.children == 1
+end
+
+function PaneTree:findNodeByWinNr(winNr)
+	if #self.rootNode.children == 0 then
+		return self.rootNode
+	end
+
+	return self:_findNodeByWinNr(self.rootNode, winNr)
+end
+
+function PaneTree:_findNodeByWinNr(node, winNr)
+	if node.editorGroup then
+		if node.editorGroup.win_nr == winNr then
+			return node
+		end
+	end
+
+	for _, child in ipairs(node.children) do
+		local found = self:_findNodeByWinNr(child, winNr)
+		if found then
+			return found
+		end
+	end
+
+	return nil
 end
 
 function PaneTree:findNodeByWinId(winId)
@@ -172,7 +197,11 @@ function PaneTree:_printTreeRecursive(node, level)
 	local indent = string.rep("  ", level)
 
 	if node.editorGroup then
-		print(indent .. "EditorGroup (win_id=" .. node.editorGroup.win_id .. ") ", node.isVertical)
+		print(
+			indent .. "EditorGroup (win_id=" .. node.editorGroup.win_id .. " win_nr=" .. node.editorGroup.win_nr
+				or nil .. ")",
+			node.isVertical
+		)
 		if not node.editorGroup.stack:isEmpty() then
 			local buffers_str = indent .. "  Buffers: "
 			for i, bufnr in ipairs(node.editorGroup.stack.items) do

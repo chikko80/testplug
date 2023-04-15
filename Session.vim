@@ -13,17 +13,18 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
+badd +1 .gitignore
+badd +1 CHANGELOG.md
+badd +1 lua/better-window/editor_group.lua
 argglobal
 %argdel
+edit lua/better-window/editor_group.lua
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
-wincmd _ | wincmd |
-vsplit
-2wincmd h
-wincmd w
+1wincmd h
 wincmd w
 let &splitbelow = s:save_splitbelow
 let &splitright = s:save_splitright
@@ -36,7 +37,7 @@ set winminwidth=0
 set winwidth=1
 wincmd =
 argglobal
-enew
+balt CHANGELOG.md
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -45,9 +46,21 @@ setlocal fdl=0
 setlocal fml=1
 setlocal fdn=20
 setlocal fen
+silent! normal! zE
+let &fdl = &fdl
+let s:l = 1 - ((0 * winheight(0) + 33) / 66)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 1
+normal! 0
 wincmd w
 argglobal
-enew
+if bufexists(fnamemodify(".gitignore", ":p")) | buffer .gitignore | else | edit .gitignore | endif
+if &buftype ==# 'terminal'
+  silent file .gitignore
+endif
+balt .gitignore
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -56,19 +69,15 @@ setlocal fdl=0
 setlocal fml=1
 setlocal fdn=20
 setlocal fen
+silent! normal! zE
+let &fdl = &fdl
+let s:l = 1 - ((0 * winheight(0) + 33) / 66)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 1
+normal! 0
 wincmd w
-argglobal
-enew
-setlocal fdm=manual
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=0
-setlocal fml=1
-setlocal fdn=20
-setlocal fen
-wincmd w
-3wincmd w
 wincmd =
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'

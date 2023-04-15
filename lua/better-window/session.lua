@@ -1,4 +1,6 @@
+local utils = require("better-window.utils")
 local json = require("better-window.json")
+
 local TabManager = require("better-window.tab_manager")
 local WindowManager = require("better-window.windows_manager")
 local EditorGroup = require("better-window.editor_group")
@@ -9,78 +11,6 @@ local Node = require("better-window.node")
 local SharedState = require("better-window.state")
 
 local SessionManager = {}
-
-local tab_manager
-local update_tab_manager_callback
-
-function SessionManager.init(_tab_manager)
-	tab_manager = _tab_manager
-end
-
-function serialize(tbl, indent)
-	indent = indent or 0
-	local str = "{\n"
-
-	for k, v in pairs(tbl) do
-		str = str .. string.rep("  ", indent + 1)
-
-		if type(k) == "string" then
-			str = str .. string.format('["%s"]', k)
-		else
-			str = str .. string.format("[%s]", k)
-		end
-
-		str = str .. " = "
-
-		if type(v) == "table" then
-			str = str .. serialize(v, indent + 1)
-		elseif type(v) == "string" then
-			str = str .. string.format('"%s"', v)
-		else
-			str = str .. tostring(v)
-		end
-
-		str = str .. ",\n"
-	end
-
-	str = str .. string.rep("  ", indent) .. "}"
-
-	if indent == 0 then
-		str = "return " .. str
-	end
-
-	return str
-end
-
-local function deserialize(str)
-	-- Load the table from the serialized string
-	local loaded_data = load(str)()
-
-	-- Create a table to store references by their unique identifiers
-	local refs = {}
-
-	-- Helper function to recursively resolve references
-	local function resolveRefs(t)
-		for k, v in pairs(t) do
-			if type(v) == "string" and v:find("_REF_") == 1 then
-				local ref_key = v
-				if not refs[ref_key] then
-					-- First time encountering this reference, create an empty table
-					refs[ref_key] = {}
-				end
-				t[k] = refs[ref_key]
-			elseif type(v) == "table" then
-				-- Recursively resolve references in child tables
-				resolveRefs(v)
-			end
-		end
-	end
-
-	-- Resolve references in the loaded data
-	resolveRefs(loaded_data)
-
-	return loaded_data
-end
 
 local function restore_metatables(obj, visited)
 	if type(obj) ~= "table" then
@@ -126,16 +56,42 @@ end
 
 function SessionManager:save()
 	print("saving session")
-	print("Access to manager: ", not (tab_manager == nil))
+-- TODO: save buffer ids
 	vim.g.TEST = json.dump(SharedState.get_tab_manager())
 end
 
+-- TODO: restore / update buffer ids
 function SessionManager:restore()
 	print("restoring session")
 	local _, restored = json.load(vim.g.TEST)
 	restore_metatables(restored)
+	print("restored")
 	print(vim.inspect(restored))
+
 	SharedState.set_tab_manager(restored)
+
+	-- update window ids
+	local tab_manager = SharedState.get_tab_manager()
+	local tabs = utils.get_tabs()
+	for _, tabId in ipairs(tabs) do
+		-- get window ids of current session
+		local mapper = utils.get_winnr_to_win_id_mapper(tabId)
+		local windows_manager = tab_manager:get_windows_manager(tabId)
+		-- print(vim.inspect(windows_manager))
+
+		if windows_manager then
+			for winNr, winId in pairs(mapper) do
+				-- restore / update new window ids from current session
+				windows_manager.paneTree:findNodeByWinNr(winNr).editorGroup:updateWinId(winId)
+			end
+		else
+			error("no window manager")
+		end
+		-- update / restore last layout table
+		windows_manager.last_layout = utils.get_layout(tabId)
+	end
+	print("final")
+	print(vim.inspect(SharedState.get_tab_manager()))
 end
 
 return SessionManager

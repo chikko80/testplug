@@ -10,13 +10,29 @@ function TabManager.new()
 	self.windows_manager = {} -- Initialize windows_manager
 
 	local currentTabId = vim.api.nvim_get_current_tabpage()
-	self.windows_manager[currentTabId] = WindowManager.new()
+	self.windows_manager[currentTabId] = WindowManager.new(currentTabId)
 
 	return self
 end
 
+function TabManager:update_window_numbers(tabId)
+	if not self.windows_manager[tabId] then
+		return
+	end
+
+	self.windows_manager[tabId]:updateWindowNumbers()
+end
+
+function TabManager:update_window_ids(tabId)
+	if not self.windows_manager[tabId] then
+		return
+	end
+
+	self.windows_manager[tabId]:updateWindowIds()
+end
+
 function TabManager:add_tab(tabId)
-	self.windows_manager[tabId] = WindowManager.new()
+	self.windows_manager[tabId] = WindowManager.new(tabId)
 
 	-- update tabs
 	self.tabs = utils.get_tabs()
@@ -70,7 +86,7 @@ function TabManager:split(tabId, command)
 	self.windows_manager[tabId]:split(command)
 
 	-- save new layout
-	self.windows_manager[tabId].last_layout = utils.get_layout()
+	self.windows_manager[tabId].last_layout = utils.get_layout(tabId)
 end
 
 function TabManager:remove_group(tabId)
@@ -78,7 +94,7 @@ function TabManager:remove_group(tabId)
 		return
 	end
 
-	local new_layout = utils.get_layout()
+	local new_layout = utils.get_layout(tabId)
 	-- if user didn't change layout, do nothing
 	if #self.windows_manager[tabId].last_layout == #new_layout then
 		return

@@ -19,9 +19,9 @@ function M.init(_tab_manager)
 end
 
 function M.build()
-	local win_ids = utils.get_layout()
-
 	local tabId = vim.api.nvim_get_current_tabpage()
+
+	local win_ids = utils.get_layout(tabId)
 	local windows_manager = tab_manager:get_windows_manager(tabId)
 	for _, win_id in ipairs(win_ids) do
 		local tabline_string = M.build_for_editor_group(windows_manager, win_id)

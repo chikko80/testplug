@@ -5,12 +5,21 @@ local Stack = require("better-window.stack") -- Replace with the path to your St
 local EditorGroup = {}
 EditorGroup.__index = EditorGroup
 
-function EditorGroup.new(win_id)
+function EditorGroup.new(win_id, win_nr)
 	local self = setmetatable({}, EditorGroup)
 	self.win_id = win_id
+	self.win_nr = win_nr
 	self.activeEditor = nil
 	self.stack = Stack.new() -- Use Stack to manage editors within the group
 	return self
+end
+
+function EditorGroup:updateWinId(win_id)
+	self.win_id = win_id
+end
+
+function EditorGroup:updateWinNr()
+	self.win_nr = vim.fn.win_id2win(self.win_id)
 end
 
 function EditorGroup:addEditor(bufnr)

@@ -43,28 +43,33 @@ end
 local function move(direction)
 	local tabId = vim.api.nvim_get_current_tabpage()
 	SharedState.get_tab_manager():move_into_editor_group(tabId, direction)
+	SharedState.get_tab_manager():update_window_numbers(tabId)
 end
 
 -- editor operations
 local function add_to_group()
 	local tabId = vim.api.nvim_get_current_tabpage()
 	SharedState.get_tab_manager():add_to_group(tabId)
+	SharedState.get_tab_manager():update_window_numbers(tabId)
 end
 
 local function remove_from_group()
 	local tabId = vim.api.nvim_get_current_tabpage()
 	SharedState.get_tab_manager():remove_from_group(tabId)
+	SharedState.get_tab_manager():update_window_numbers(tabId)
 end
 
 -- tree operations
 local function split(command)
 	local tabId = vim.api.nvim_get_current_tabpage()
 	SharedState.get_tab_manager():split(tabId, command)
+	SharedState.get_tab_manager():update_window_numbers(tabId)
 end
 
 local function remove_group()
 	local tabId = vim.api.nvim_get_current_tabpage()
 	SharedState.get_tab_manager():remove_group(tabId)
+	SharedState.get_tab_manager():update_window_numbers(tabId)
 end
 
 local function debug()

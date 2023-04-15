@@ -4,13 +4,28 @@ local utils = require("better-window.utils")
 local WindowManager = {}
 WindowManager.__index = WindowManager
 
-function WindowManager.new()
+function WindowManager.new(tabId)
 	local self = setmetatable({}, WindowManager)
-
 	local currentWinId = vim.api.nvim_get_current_win()
-	self.paneTree = PaneTree.new(currentWinId)
-	self.last_layout = utils.get_layout() -- single window on start
+	local currentWinNr = vim.fn.winnr()
+	self.paneTree = PaneTree.new(currentWinId, currentWinNr)
+	self.tabId = tabId
+	self.last_layout = utils.get_layout(tabId) -- single window on start
 	return self
+end
+
+function WindowManager:updateWindowNumbers()
+	self:_updateWindowNumbersRecursive(self.paneTree.rootNode)
+end
+
+function WindowManager:_updateWindowNumbersRecursive(node)
+	if node.editorGroup then
+		node.editorGroup:updateWinNr()
+	end
+
+	for _, child in ipairs(node.children) do
+		self:_updateWindowNumbersRecursive(child)
+	end
 end
 
 function WindowManager:getEditorGroup(winId)
@@ -63,7 +78,7 @@ function WindowManager:move_into_editor_group(direction)
 		return
 	end
 
-	local target_win = utils.find_closest_pane(utils.get_layout(), current_win_id, direction)
+	local target_win = utils.find_closest_pane(utils.get_layout(self.tabId), current_win_id, direction)
 	local target_node = self.paneTree:findNodeByWinId(target_win)
 	if not target_node then
 		return
@@ -83,7 +98,9 @@ end
 function WindowManager:split(command)
 	local old_buf_id = vim.api.nvim_get_current_buf()
 	local old_win_id = vim.api.nvim_get_current_win()
+
 	vim.api.nvim_command(command)
+
 	local newWinId = vim.api.nvim_get_current_win()
 	-- print(newWinId)
 

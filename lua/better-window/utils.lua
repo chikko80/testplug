@@ -1,5 +1,4 @@
 local function get_win_and_buf_id()
-
 	local winId = vim.api.nvim_get_current_win()
 	local bufId = vim.api.nvim_get_current_buf()
 	return winId, bufId
@@ -10,12 +9,10 @@ local function get_tabs()
 	return tabs
 end
 
-local function get_layout() -- just a list of window ids
-	local current_tab = vim.api.nvim_get_current_tabpage()
-
+local function get_layout(tab_id) -- just a list of window ids
 	local valid_winid = {}
 
-	local windows = vim.api.nvim_tabpage_list_wins(current_tab)
+	local windows = vim.api.nvim_tabpage_list_wins(tab_id)
 	for _, win_id in ipairs(windows) do
 		local window_config = vim.api.nvim_win_get_config(win_id)
 		-- print(vim.inspect(window_config))
@@ -191,6 +188,15 @@ local function darken_hex_color(hex_color, factor)
 	return darker_hex_color
 end
 
+local function get_winnr_to_win_id_mapper(tabId)
+	local win_ids = get_layout(tabId)
+	local winnr_to_id = {}
+	for _, win_id in ipairs(win_ids) do
+		local winnr = vim.fn.win_id2win(win_id)
+		winnr_to_id[winnr] = win_id
+	end
+	return winnr_to_id
+end
 
 return {
 	get_tabs = get_tabs,
@@ -198,5 +204,6 @@ return {
 	get_list_diff = get_list_diff,
 	find_closest_pane = find_closest_pane,
 	get_win_and_buf_id = get_win_and_buf_id,
-    darken_hex_color = darken_hex_color,
+	darken_hex_color = darken_hex_color,
+	get_winnr_to_win_id_mapper = get_winnr_to_win_id_mapper,
 }
