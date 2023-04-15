@@ -1,6 +1,4 @@
 local utils = require("better-window.utils")
-
-
 local devicons_present, devicons = pcall(require, "nvim-web-devicons")
 local M = {}
 
@@ -27,8 +25,10 @@ function M.build()
 	local windows_manager = tab_manager:get_windows_manager(tabId)
 	for _, win_id in ipairs(win_ids) do
 		local tabline_string = M.build_for_editor_group(windows_manager, win_id)
-		print(win_id, tabline_string)
-		vim.api.nvim_set_option_value("winbar", tabline_string, { scope = "local", win = win_id })
+
+		if tabline_string then
+			pcall(vim.api.nvim_set_option_value, "winbar", tabline_string, { scope = "local", win = win_id })
+		end
 	end
 end
 
@@ -42,8 +42,11 @@ function M.build_for_editor_group(windows_manager, win_id)
 	local tabline_string = ""
 	for _, bufnr in ipairs(editors.items) do
 		local name = vim.api.nvim_buf_get_name(bufnr)
-		local file_info = M.get_file_info(name, win_id, bufnr)
 
+		local file_info = M.get_file_info(name, win_id, bufnr)
+		if not file_info then
+			return
+		end
 		if is_main_active_buffer(win_id, bufnr) then
 			-- if  active_bufnr == bufnr then
 			tabline_string = tabline_string .. "%#ActiveEditor#" .. file_info
@@ -74,22 +77,22 @@ function M.get_file_info(name, win_id, bufnr)
 		-- padding around bufname; 24 = bufame length (icon + filename)
 		local maxname_len = 16
 
-		name = vim.api.nvim_buf_get_name(bufnr):match("([^/]+)$")
+		name = name:match("([^/]+)$")
+		if not name then
+			return
+		end
+
 		name = (#name > maxname_len and string.sub(name, 1, 14) .. "..") or name
 
 		local padding = (24 - #name - 7) / 2
-		print(#name)
-		print(padding)
 
 		name = (
 			is_main_active_buffer(win_id, bufnr) and M.apply_hl_group("ActiveEditor", name)
 			or M.apply_hl_group("InactiveEditor", name)
 		)
 
-
 		return string.rep(" ", padding) .. icon .. " " .. name .. string.rep(" ", padding)
 	end
 end
-
 
 return M

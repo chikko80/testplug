@@ -1,8 +1,10 @@
 -- Node class
+
 local Node = {}
 Node.__index = Node
 
 function Node.new(editorGroup, parent)
+
 	local self = setmetatable({}, Node)
 	self.editorGroup = editorGroup
 	self.parent = parent
@@ -28,6 +30,7 @@ function Node:removeChild(childNode)
 			break
 		end
 	end
+
 end
 
 function Node:getIndexInParent()

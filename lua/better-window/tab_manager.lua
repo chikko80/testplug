@@ -26,7 +26,7 @@ end
 function TabManager:remove_tab()
 	local new_tab_list = utils.get_tabs()
 
-    -- detect the removed tab/s
+	-- detect the removed tab/s
 	for _, tabId in ipairs(utils.get_list_diff(self.tabs, new_tab_list)) do
 		self.windows_manager[tabId] = nil
 	end
