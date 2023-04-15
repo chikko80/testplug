@@ -1,11 +1,5 @@
--- bangleetter-window.nvim.lua
--- require("better-window.tabufline.lazyload")
-require("better-window.winbar.autocommands")
-local TabManager = require("better-window.tab_manager")
-local builder = require("better-window.winbar.builder")
-local SessionManager = require("better-window.session")
-
-local tab_manager
+-- require("better-window.winbar.autocommands")
+local SharedState
 
 local function setup()
 	-- Create commands
@@ -33,55 +27,54 @@ local function setup()
     ]])
 
 	-- init new grid with new group
-	tab_manager = TabManager.new()
-	builder.init(tab_manager)
-    SessionManager.init(tab_manager)
+	SharedState = require("better-window.state")
+	print(vim.inspect(SharedState.get_tab_manager()))
 end
 
 local function add_tab()
 	local tabId = vim.api.nvim_get_current_tabpage()
-	tab_manager:add_tab(tabId)
+	SharedState.get_tab_manager():add_tab(tabId)
 end
 
 local function remove_tab()
-	tab_manager:remove_tab()
+	SharedState.get_tab_manager():remove_tab()
 end
 
 local function move(direction)
 	local tabId = vim.api.nvim_get_current_tabpage()
-	tab_manager:move_into_editor_group(tabId, direction)
+	SharedState.get_tab_manager():move_into_editor_group(tabId, direction)
 end
 
 -- editor operations
 local function add_to_group()
 	local tabId = vim.api.nvim_get_current_tabpage()
-	tab_manager:add_to_group(tabId)
+	SharedState.get_tab_manager():add_to_group(tabId)
 end
 
 local function remove_from_group()
 	local tabId = vim.api.nvim_get_current_tabpage()
-	tab_manager:remove_from_group(tabId)
+	SharedState.get_tab_manager():remove_from_group(tabId)
 end
 
 -- tree operations
 local function split(command)
 	local tabId = vim.api.nvim_get_current_tabpage()
-	tab_manager:split(tabId, command)
+	SharedState.get_tab_manager():split(tabId, command)
 end
 
 local function remove_group()
 	local tabId = vim.api.nvim_get_current_tabpage()
-	tab_manager:remove_group(tabId)
+	SharedState.get_tab_manager():remove_group(tabId)
 end
 
 local function debug()
 	local tabId = vim.api.nvim_get_current_tabpage()
-	tab_manager:debug(tabId)
+	SharedState.get_tab_manager():debug(tabId)
 end
 
 local function get_windows_manager()
 	local tabId = vim.api.nvim_get_current_tabpage()
-	return tab_manager:get_windows_manager(tabId)
+	return SharedState.get_tab_manager():get_windows_manager(tabId)
 end
 
 return {

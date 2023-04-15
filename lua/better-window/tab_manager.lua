@@ -11,7 +11,6 @@ function TabManager.new()
 
 	local currentTabId = vim.api.nvim_get_current_tabpage()
 	self.windows_manager[currentTabId] = WindowManager.new()
-	print(self)
 
 	return self
 end
