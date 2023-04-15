@@ -1,11 +1,10 @@
-
 local builder = require("better-window.winbar.builder")
 print("calling")
 
-vim.api.nvim_create_autocmd({ "DirChanged", "InsertEnter", "BufWritePost" }, {
+vim.api.nvim_create_autocmd({ "InsertEnter"  }, {
+-- vim.api.nvim_create_autocmd({ "DirChanged", "BufWinEnter","BufEnter","WinEnter", "BufLeave", "WinNew", "InsertEnter"  }, {
 
 	callback = function()
-		print("callback")
 		builder.build()
 	end,
 })

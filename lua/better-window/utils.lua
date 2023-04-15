@@ -1,4 +1,5 @@
 local function get_win_and_buf_id()
+
 	local winId = vim.api.nvim_get_current_win()
 	local bufId = vim.api.nvim_get_current_buf()
 	return winId, bufId
@@ -175,10 +176,27 @@ function calculate_distance(center1, center2)
 	return math.sqrt(dx * dx + dy * dy)
 end
 
+local function darken_hex_color(hex_color, factor)
+	-- Convert hex color to RGB components
+	local r, g, b =
+		tonumber(hex_color:sub(2, 3), 16), tonumber(hex_color:sub(4, 5), 16), tonumber(hex_color:sub(6, 7), 16)
+
+	-- Apply the darkening factor
+	r = math.floor(math.max(0, r * factor))
+	g = math.floor(math.max(0, g * factor))
+	b = math.floor(math.max(0, b * factor))
+
+	-- Convert the modified RGB components back to a hex color
+	local darker_hex_color = string.format("#%02X%02X%02X", r, g, b)
+	return darker_hex_color
+end
+
+
 return {
 	get_tabs = get_tabs,
 	get_layout = get_layout,
 	get_list_diff = get_list_diff,
 	find_closest_pane = find_closest_pane,
 	get_win_and_buf_id = get_win_and_buf_id,
+    darken_hex_color = darken_hex_color,
 }
