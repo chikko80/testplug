@@ -1,4 +1,5 @@
 
+
 .DS_Store
 upcoming.txt
 .luarc.json
@@ -7,3 +8,489 @@ upcoming.txt
 file.lua
 tabufline
 
+
+
+
+restoring session
+restored
+{
+  [1000] = {
+    activeEditor = 1,
+
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <1>{
+            __index = <table 1>,
+            new = <function 1>
+          }
+        } },
+      <metatable> = <2>{
+        __index = <table 2>,
+        addEditorToStack = <function 2>,
+        indexOf = <function 3>,
+        isEmpty = <function 4>,
+        new = <function 5>,
+        peek = <function 6>,
+        print = <function 7>,
+        removeEditorFromStack = <function 8>
+      }
+    },
+    win_id = 1000,
+    win_nr = 1,
+    <metatable> = <3>{
+      __index = <table 3>,
+      addEditor = <function 9>,
+      new = <function 10>,
+      removeEditor = <function 11>,
+      restoreCursor = <function 12>,
+      setActiveEditor = <function 13>,
+      updateBufNrs = <function 14>,
+      updateWinId = <function 15>,
+      updateWinNr = <function 16>
+    }
+  },
+  [1009] = {
+    activeEditor = 1,
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <table 1>
+        } },
+      <metatable> = <table 2>
+    },
+    win_id = 1009,
+    win_nr = 9,
+    <metatable> = <table 3>
+  },
+  [1010] = {
+    activeEditor = 1,
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <table 1>
+        } },
+      <metatable> = <table 2>
+    },
+    win_id = 1010,
+    win_nr = 12,
+    <metatable> = <table 3>
+  },
+  [1011] = {
+    activeEditor = 1,
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <table 1>
+        } },
+      <metatable> = <table 2>
+    },
+    win_id = 1011,
+    win_nr = 13,
+    <metatable> = <table 3>
+  },
+  [1012] = {
+    activeEditor = 1,
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <table 1>
+        } },
+      <metatable> = <table 2>
+    },
+    win_id = 1012,
+    win_nr = 14,
+    <metatable> = <table 3>
+  },
+  [1013] = {
+    activeEditor = 1,
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <table 1>
+        } },
+      <metatable> = <table 2>
+    },
+    win_id = 1013,
+    win_nr = 10,
+    <metatable> = <table 3>
+  },
+  [1014] = {
+    activeEditor = 1,
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <table 1>
+        } },
+      <metatable> = <table 2>
+    },
+    win_id = 1014,
+    win_nr = 11,
+    <metatable> = <table 3>
+  },
+  [1015] = {
+    activeEditor = 1,
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <table 1>
+        } },
+      <metatable> = <table 2>
+    },
+    win_id = 1015,
+    win_nr = 4,
+    <metatable> = <table 3>
+  },
+  [1016] = {
+    activeEditor = 1,
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <table 1>
+        } },
+      <metatable> = <table 2>
+    },
+    win_id = 1016,
+    win_nr = 7,
+    <metatable> = <table 3>
+  },
+  [1017] = {
+    activeEditor = 1,
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <table 1>
+        } },
+      <metatable> = <table 2>
+    },
+    win_id = 1017,
+    win_nr = 8,
+    <metatable> = <table 3>
+  },
+  [1018] = {
+    activeEditor = 1,
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <table 1>
+        } },
+      <metatable> = <table 2>
+    },
+    win_id = 1018,
+    win_nr = 5,
+    <metatable> = <table 3>
+  },
+  [1019] = {
+    activeEditor = 24,
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <table 1>
+        }, {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/lua/better-window/editor.lua",
+          buf_nr = 24,
+          <metatable> = <table 1>
+        } },
+      <metatable> = <table 2>
+    },
+    win_id = 1019,
+    win_nr = 6,
+    <metatable> = <table 3>
+  },
+  [1020] = {
+    activeEditor = 1,
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <table 1>
+        } },
+      <metatable> = <table 2>
+    },
+    win_id = 1020,
+    win_nr = 2,
+    <metatable> = <table 3>
+  },
+  [1021] = {
+    activeEditor = 1,
+    stack = {
+      items = { {
+          buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+          buf_nr = 1,
+          <metatable> = <table 1>
+        } },
+      <metatable> = <table 2>
+    },
+    win_id = 1021,
+    win_nr = 3,
+    <metatable> = <table 3>
+  }
+}
+Restoring editor group 1000 1
+1 1 1000
+Restoring editor group 1018 2
+2 2 1018
+Restoring editor group 1021 3
+3 3 1021
+Restoring editor group 1019 4
+4 4 1019
+Restoring editor group 1022 5
+Restoring editor group 1024 6
+Restoring editor group 1023 7
+7 7 1023
+Restoring editor group 1025 8
+8 8 1025
+Restoring editor group 1020 9
+9 9 1020
+Restoring editor group 1027 10
+10 10 1027
+Restoring editor group 1028 11
+11 11 1028
+Restoring editor group 1026 12
+12 12 1026
+Restoring editor group 1029 13
+13 13 1029
+Restoring editor group 1030 14
+14 14 1030
+Restoring editor group 1079 15
+final
+{
+  tabs = { 1 },
+  windows_manager = { {
+      editor_groups = {
+        [1000] = {
+          activeEditor = 1,
+          stack = {
+            items = { {
+                buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+                buf_nr = 18,
+                <metatable> = <1>{
+                  __index = <table 1>,
+                  new = <function 1>
+                }
+              } },
+            <metatable> = <2>{
+              __index = <table 2>,
+              addEditorToStack = <function 2>,
+              indexOf = <function 3>,
+              isEmpty = <function 4>,
+              new = <function 5>,
+              peek = <function 6>,
+              print = <function 7>,
+              removeEditorFromStack = <function 8>
+            }
+          },
+          win_id = 1000,
+          win_nr = 1,
+          <metatable> = <3>{
+            __index = <table 3>,
+            addEditor = <function 9>,
+            new = <function 10>,
+            removeEditor = <function 11>,
+            restoreCursor = <function 12>,
+            setActiveEditor = <function 13>,
+            updateBufNrs = <function 14>,
+            updateWinId = <function 15>,
+            updateWinNr = <function 16>
+          }
+        },
+        [1018] = {
+          activeEditor = 1,
+          stack = {
+            items = { {
+                buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+                buf_nr = 18,
+                <metatable> = <table 1>
+              } },
+            <metatable> = <table 2>
+          },
+          win_id = 1018,
+          win_nr = 2,
+          <metatable> = <table 3>
+        },
+        [1019] = {
+          activeEditor = 1,
+          stack = {
+            items = { {
+                buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+                buf_nr = 18,
+                <metatable> = <table 1>
+              } },
+            <metatable> = <table 2>
+          },
+          win_id = 1019,
+          win_nr = 4,
+          <metatable> = <table 3>
+        },
+        [1020] = {
+          activeEditor = 1,
+          stack = {
+            items = { {
+                buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+                buf_nr = 18,
+                <metatable> = <table 1>
+              } },
+            <metatable> = <table 2>
+          },
+          win_id = 1020,
+          win_nr = 9,
+          <metatable> = <table 3>
+        },
+        [1021] = {
+          activeEditor = 1,
+          stack = {
+            items = { {
+                buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+                buf_nr = 18,
+                <metatable> = <table 1>
+              } },
+            <metatable> = <table 2>
+          },
+          win_id = 1021,
+          win_nr = 3,
+          <metatable> = <table 3>
+        },
+        [1023] = {
+          activeEditor = 1,
+          stack = {
+            items = { {
+                buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+                buf_nr = 18,
+                <metatable> = <table 1>
+              } },
+            <metatable> = <table 2>
+          },
+          win_id = 1023,
+          win_nr = 7,
+          <metatable> = <table 3>
+        },
+        [1025] = {
+          activeEditor = 1,
+          stack = {
+            items = { {
+                buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+                buf_nr = 18,
+                <metatable> = <table 1>
+              } },
+            <metatable> = <table 2>
+          },
+          win_id = 1025,
+          win_nr = 8,
+          <metatable> = <table 3>
+        },
+        [1026] = {
+          activeEditor = 1,
+          stack = {
+            items = { {
+                buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+                buf_nr = 18,
+                <metatable> = <table 1>
+              } },
+            <metatable> = <table 2>
+          },
+          win_id = 1026,
+          win_nr = 12,
+          <metatable> = <table 3>
+        },
+        [1027] = {
+          activeEditor = 1,
+          stack = {
+            items = { {
+                buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+                buf_nr = 18,
+                <metatable> = <table 1>
+              } },
+            <metatable> = <table 2>
+          },
+          win_id = 1027,
+          win_nr = 10,
+          <metatable> = <table 3>
+        },
+        [1028] = {
+          activeEditor = 1,
+          stack = {
+            items = { {
+                buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+                buf_nr = 18,
+                <metatable> = <table 1>
+              } },
+            <metatable> = <table 2>
+          },
+          win_id = 1028,
+          win_nr = 11,
+          <metatable> = <table 3>
+        },
+        [1029] = {
+          activeEditor = 1,
+          stack = {
+            items = { {
+                buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+                buf_nr = 18,
+                <metatable> = <table 1>
+              } },
+            <metatable> = <table 2>
+          },
+          win_id = 1029,
+          win_nr = 13,
+          <metatable> = <table 3>
+        },
+        [1030] = {
+          activeEditor = 1,
+          stack = {
+            items = { {
+                buf_name = "/Users/chikko/vsCodeProjects/better-window.nvim/.gitignore",
+                buf_nr = 18,
+                <metatable> = <table 1>
+              } },
+            <metatable> = <table 2>
+          },
+          win_id = 1030,
+          win_nr = 14,
+          <metatable> = <table 3>
+        }
+      },
+      last_layout = { 1000, 1018, 1021, 1019, 1022, 1024, 1023, 1025, 1020, 1027, 1028, 1026, 1029, 1030, 1079 },
+      tabId = 1,
+      <metatable> = <4>{
+        RemoveEditor = <function 17>,
+        RemoveGroup = <function 18>,
+        __index = <table 4>,
+        addEditor = <function 19>,
+        findByWindowNr = <function 20>,
+        getEditorGroup = <function 21>,
+        isLastGroup = <function 22>,
+        move_into_editor_group = <function 23>,
+        new = <function 24>,
+        split = <function 25>,
+        updateDataAfterRestore = <function 26>,
+        updateWindowNumbers = <function 27>
+      }
+    } },
+  <metatable> = <5>{
+    __index = <table 5>,
+    add_tab = <function 28>,
+    add_to_group = <function 29>,
+    debug = <function 30>,
+    get_windows_manager = <function 31>,
+    move_into_editor_group = <function 32>,
+    new = <function 33>,
+    remove_from_group = <function 34>,
+    remove_group = <function 35>,
+    remove_tab = <function 36>,
+    split = <function 37>,
+    update_window_ids = <function 38>,
+    update_window_numbers = <function 39>
+  }
+}

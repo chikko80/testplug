@@ -113,7 +113,7 @@ function TabManager:debug(tabId)
 	if not self.windows_manager[tabId] then
 		return
 	end
-	self.windows_manager[tabId].paneTree:printTree()
+	print(vim.inspect(self.windows_manager[tabId].editor_groups))
 end
 
 function TabManager:get_windows_manager(tabId)

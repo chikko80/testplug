@@ -1,4 +1,6 @@
 local Editor = {}
+
+
 Editor.__index = Editor
 
 function Editor.new(buf_nr, buf_name)

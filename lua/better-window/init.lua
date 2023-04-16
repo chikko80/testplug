@@ -1,4 +1,4 @@
--- require("better-window.winbar.autocommands")
+require("better-window.winbar.autocommands")
 local SharedState
 
 local function setup()
@@ -15,7 +15,7 @@ local function setup()
 	vim.cmd("command! BetterWinSelection lua require('better-window.selection').show_popup()")
 
 	vim.cmd([[
-    augroup LayoutTracker
+    augroup BetterWindowAutocommands
         autocmd!
 
         autocmd TabNew * lua require('better-window').add_tab()
@@ -23,12 +23,16 @@ local function setup()
 
         autocmd BufEnter * lua require('better-window').add_to_group()
         autocmd WinClosed * lua vim.schedule_wrap(require('better-window').remove_group)()
+
+"
+        autocmd VimLeavePre * lua require("better-window.session").save()
+        autocmd SessionLoadPost * lua vim.schedule_wrap(require('better-window.session').restore)()
+        
     augroup END
     ]])
 
 	-- init new grid with new group
 	SharedState = require("better-window.state")
-	print(vim.inspect(SharedState.get_tab_manager()))
 end
 
 local function add_tab()
@@ -73,8 +77,7 @@ local function remove_group()
 end
 
 local function debug()
-	local tabId = vim.api.nvim_get_current_tabpage()
-	SharedState.get_tab_manager():debug(tabId)
+	print(vim.inspect(SharedState.get_tab_manager()))
 end
 
 local function get_windows_manager()

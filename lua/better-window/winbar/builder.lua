@@ -2,7 +2,7 @@ local utils = require("better-window.utils")
 local devicons_present, devicons = pcall(require, "nvim-web-devicons")
 local M = {}
 
-local tab_manager
+local SharedState = require("better-window.state")
 
 vim.api.nvim_set_hl(0, "ActiveEditor", { bold = true })
 vim.api.nvim_set_hl(0, "InactiveEditor", { fg = "#546178", bg = "#171b21" })
@@ -14,15 +14,11 @@ function is_main_active_buffer(win_id, bufnr)
 	return win_id == current_win and win_bufnr == bufnr
 end
 
-function M.init(_tab_manager)
-	tab_manager = _tab_manager
-end
-
 function M.build()
 	local tabId = vim.api.nvim_get_current_tabpage()
 
 	local win_ids = utils.get_layout(tabId)
-	local windows_manager = tab_manager:get_windows_manager(tabId)
+	local windows_manager = SharedState.get_tab_manager():get_windows_manager(tabId)
 	for _, win_id in ipairs(win_ids) do
 		local tabline_string = M.build_for_editor_group(windows_manager, win_id)
 
@@ -33,15 +29,16 @@ function M.build()
 end
 
 function M.build_for_editor_group(windows_manager, win_id)
-	local editors = windows_manager:getEditorGroup(win_id)
+	local editor_group = windows_manager:getEditorGroup(win_id)
 
-	if not editors then
+	if not editor_group then
 		return
 	end
 
 	local tabline_string = ""
-	for _, bufnr in ipairs(editors.items) do
-		local name = vim.api.nvim_buf_get_name(bufnr)
+	for _, editor in pairs(editor_group.stack.items) do
+		local bufnr = editor.buf_nr
+		local name = editor.buf_name
 
 		local file_info = M.get_file_info(name, win_id, bufnr)
 		if not file_info then

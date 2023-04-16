@@ -4,7 +4,6 @@ local json = require("better-window.json")
 local TabManager = require("better-window.tab_manager")
 local WindowManager = require("better-window.windows_manager")
 local EditorGroup = require("better-window.editor_group")
-local PaneTree = require("better-window.tree")
 local Stack = require("better-window.stack")
 local Node = require("better-window.node")
 local Editor = require("better-window.editor")
@@ -30,16 +29,12 @@ local function restore_metatables(obj, visited)
 		setmetatable(obj, TabManager)
 	end
 
-	if obj.paneTree ~= nil and obj.last_layout ~= nil then
+	if obj.editor_groups ~= nil and obj.last_layout ~= nil then
 		setmetatable(obj, WindowManager)
 	end
 
 	if obj.win_id ~= nil and obj.stack ~= nil then
 		setmetatable(obj, EditorGroup)
-	end
-
-	if obj.rootNode ~= nil then
-		setmetatable(obj, PaneTree)
 	end
 
 	if obj.items ~= nil then
@@ -61,14 +56,18 @@ end
 
 function SessionManager:save()
 	print("saving session")
-	vim.g.TEST = json.dump(SharedState.get_tab_manager())
+	-- print(json.dump(SharedState.get_tab_manager()))
+	vim.g.BETTER_WINDOW_SESSION = json.dump(SharedState.get_tab_manager())
 end
 
 -- TODO: restore / update buffer ids
 function SessionManager:restore()
 	print("restoring session")
-	local _, restored = json.load(vim.g.TEST)
+	local _, restored = json.load(vim.g.BETTER_WINDOW_SESSION)
 	restore_metatables(restored)
+
+	-- print("restored")
+	-- restored:debug(1)
 
 	SharedState.set_tab_manager(restored)
 
@@ -86,9 +85,8 @@ function SessionManager:restore()
 		if windows_manager then
 			-- restore / update new window ids from current session
 			for winNr, winId in pairs(mapper) do
-				local editor_group = windows_manager.paneTree:findNodeByWinNr(winNr).editorGroup
-				editor_group:updateWinId(winId)
-                editor_group:updateBufNrs(buf_mapper)
+				print("Restoring editor group",winId, winNr)
+				windows_manager:updateDataAfterRestore(winNr, winId, buf_mapper)
 			end
 		else
 			error("no window manager")
@@ -96,8 +94,8 @@ function SessionManager:restore()
 		-- update / restore last layout table
 		windows_manager.last_layout = utils.get_layout(tabId)
 	end
-	print("final")
-	print(vim.inspect(SharedState.get_tab_manager()))
+	-- print("final")
+	-- print(vim.inspect(SharedState.get_tab_manager()))
 end
 
 return SessionManager
