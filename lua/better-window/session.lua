@@ -85,7 +85,6 @@ function SessionManager:restore()
 		if windows_manager then
 			-- restore / update new window ids from current session
 			for winNr, winId in pairs(mapper) do
-				print("Restoring editor group",winId, winNr)
 				windows_manager:updateDataAfterRestore(winNr, winId, buf_mapper)
 			end
 		else

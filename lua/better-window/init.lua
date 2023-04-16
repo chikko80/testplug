@@ -1,6 +1,8 @@
 require("better-window.winbar.autocommands")
 local SharedState
 
+-- TOOD: on very large complex layouts, not every group is restored properly
+
 local function setup()
 	-- Create commands
 	vim.cmd("command! BetterWinMoveLeft lua require('better-window').move('left')")

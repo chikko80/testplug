@@ -19,7 +19,6 @@ end
 function WindowManager:updateDataAfterRestore(winNr, newWinId, buf_mapper)
 	for old_win_id, editor_group in pairs(self.editor_groups) do
 		if editor_group.win_nr == winNr then
-			print(editor_group.win_nr, winNr, newWinId)
 			-- update data
 			editor_group:updateWinId(newWinId)
 			editor_group:updateBufNrs(buf_mapper)
@@ -54,7 +53,7 @@ function WindowManager:addEditor(winId, bufId)
 	local editor_group = self.editor_groups[winId]
 
 	if not editor_group then
-		print("No editor group found")
+		-- print("No editor group found")
 		return
 	end
 
