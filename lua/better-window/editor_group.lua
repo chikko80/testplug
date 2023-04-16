@@ -22,6 +22,17 @@ function EditorGroup:updateWinNr()
 	self.win_nr = vim.fn.win_id2win(self.win_id)
 end
 
+function EditorGroup:updateBufNrs(mapper)
+	for _, editor in ipairs(self.stack.items) do
+		local new_bufnr = mapper[editor.buf_name]
+		if new_bufnr then
+			editor.buf_nr = new_bufnr
+		else
+			error("Could not find bufnr for " .. editor.buf_name)
+		end
+	end
+end
+
 function EditorGroup:addEditor(bufnr)
 	self.stack:addEditorToStack(bufnr)
 	self:setActiveEditor(bufnr)

@@ -198,6 +198,21 @@ local function get_winnr_to_win_id_mapper(tabId)
 	return winnr_to_id
 end
 
+local function get_buf_name_to_bufnr()
+	local buf_mapper = {}
+	local buf_list = vim.api.nvim_list_bufs()
+
+	for _, bufnr in ipairs(buf_list) do
+		local bufname = vim.api.nvim_buf_get_name(bufnr)
+
+		if bufname ~= "" then
+			buf_mapper[bufname] = bufnr
+		end
+	end
+
+	return buf_mapper
+end
+
 return {
 	get_tabs = get_tabs,
 	get_layout = get_layout,
@@ -206,4 +221,5 @@ return {
 	get_win_and_buf_id = get_win_and_buf_id,
 	darken_hex_color = darken_hex_color,
 	get_winnr_to_win_id_mapper = get_winnr_to_win_id_mapper,
+	get_buf_name_to_bufnr = get_buf_name_to_bufnr,
 }

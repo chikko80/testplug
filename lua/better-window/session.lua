@@ -7,6 +7,7 @@ local EditorGroup = require("better-window.editor_group")
 local PaneTree = require("better-window.tree")
 local Stack = require("better-window.stack")
 local Node = require("better-window.node")
+local Editor = require("better-window.editor")
 
 local SharedState = require("better-window.state")
 
@@ -49,6 +50,10 @@ local function restore_metatables(obj, visited)
 		setmetatable(obj, Node)
 	end
 
+	if obj.buf_nr ~= nil and obj.buf_name ~= nil then
+		setmetatable(obj, Editor)
+	end
+
 	for _, v in pairs(obj) do
 		restore_metatables(v, visited)
 	end
@@ -56,7 +61,6 @@ end
 
 function SessionManager:save()
 	print("saving session")
--- TODO: save buffer ids
 	vim.g.TEST = json.dump(SharedState.get_tab_manager())
 end
 
@@ -65,24 +69,26 @@ function SessionManager:restore()
 	print("restoring session")
 	local _, restored = json.load(vim.g.TEST)
 	restore_metatables(restored)
-	print("restored")
-	print(vim.inspect(restored))
 
 	SharedState.set_tab_manager(restored)
 
 	-- update window ids
 	local tab_manager = SharedState.get_tab_manager()
+	local buf_mapper = utils.get_buf_name_to_bufnr() -- this is the buf list for all tabs
+
 	local tabs = utils.get_tabs()
+
 	for _, tabId in ipairs(tabs) do
 		-- get window ids of current session
 		local mapper = utils.get_winnr_to_win_id_mapper(tabId)
 		local windows_manager = tab_manager:get_windows_manager(tabId)
-		-- print(vim.inspect(windows_manager))
 
 		if windows_manager then
+			-- restore / update new window ids from current session
 			for winNr, winId in pairs(mapper) do
-				-- restore / update new window ids from current session
-				windows_manager.paneTree:findNodeByWinNr(winNr).editorGroup:updateWinId(winId)
+				local editor_group = windows_manager.paneTree:findNodeByWinNr(winNr).editorGroup
+				editor_group:updateWinId(winId)
+                editor_group:updateBufNrs(buf_mapper)
 			end
 		else
 			error("no window manager")

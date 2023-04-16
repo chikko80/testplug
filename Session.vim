@@ -14,11 +14,11 @@ else
   set shortmess=aoO
 endif
 badd +1 .gitignore
-badd +1 CHANGELOG.md
-badd +1 lua/better-window/editor_group.lua
+badd +0 CHANGELOG.md
+badd +1 LICENSE
 argglobal
 %argdel
-edit lua/better-window/editor_group.lua
+edit LICENSE
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -37,7 +37,7 @@ set winminwidth=0
 set winwidth=1
 wincmd =
 argglobal
-balt CHANGELOG.md
+balt .gitignore
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -53,12 +53,12 @@ if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
 keepjumps 1
-normal! 0
+normal! 047|
 wincmd w
 argglobal
-if bufexists(fnamemodify(".gitignore", ":p")) | buffer .gitignore | else | edit .gitignore | endif
+if bufexists(fnamemodify("CHANGELOG.md", ":p")) | buffer CHANGELOG.md | else | edit CHANGELOG.md | endif
 if &buftype ==# 'terminal'
-  silent file .gitignore
+  silent file CHANGELOG.md
 endif
 balt .gitignore
 setlocal fdm=manual

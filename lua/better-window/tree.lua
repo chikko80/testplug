@@ -203,14 +203,18 @@ function PaneTree:_printTreeRecursive(node, level)
 			node.isVertical
 		)
 		if not node.editorGroup.stack:isEmpty() then
-			local buffers_str = indent .. "  Buffers: "
-			for i, bufnr in ipairs(node.editorGroup.stack.items) do
-				buffers_str = buffers_str .. bufnr
+			local buffers_str = indent .. "  BuffersNrs: "
+			local buffers_names_str = indent .. "  BuffersNames: "
+			for i, editor in ipairs(node.editorGroup.stack.items) do
+				buffers_str = buffers_str .. editor.buf_nr
+				buffers_names_str = buffers_names_str .. editor.buf_name
 				if i < #node.editorGroup.stack.items then
 					buffers_str = buffers_str .. ", "
+					buffers_names_str = buffers_names_str .. ", "
 				end
 			end
 			print(buffers_str)
+			print(buffers_names_str)
 		else
 			print(indent .. "  No Buffers")
 		end
