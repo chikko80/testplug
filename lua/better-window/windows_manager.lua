@@ -91,7 +91,6 @@ function WindowManager:RemoveGroup(winId)
 end
 
 function WindowManager:move_into_editor_group(direction)
-	print("moving")
 	local current_win_id = vim.api.nvim_get_current_win()
 	local current_buf_id = vim.api.nvim_get_current_buf()
 
