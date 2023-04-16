@@ -58,12 +58,9 @@ function WindowManager:addEditor(winId, bufId)
 		return
 	end
 
-	local bufname = vim.api.nvim_buf_get_name(bufId)
-	if bufname and not bufname:match("^NvimTree") then
-		return
+	if utils.buf_name_is_valid(vim.api.nvim_buf_get_name(bufId)) then
+		editor_group:addEditor(bufId)
 	end
-
-	editor_group:addEditor(bufId)
 end
 
 function WindowManager:RemoveEditor(winId, bufId)

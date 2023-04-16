@@ -9,6 +9,13 @@ local function get_tabs()
 	return tabs
 end
 
+local function buf_name_is_valid(bufname)
+	if bufname and bufname ~= "" and not bufname:match("^NvimTree") then
+		return true
+	end
+	return false
+end
+
 local function get_layout(tab_id) -- just a list of window ids
 	local valid_winid = {}
 
@@ -24,8 +31,7 @@ local function get_layout(tab_id) -- just a list of window ids
 			local bufname = vim.api.nvim_buf_get_name(buffer_number):match("([^/]+)$")
 
 			-- Exclude windows with a buffer name matching "NvimTree"
-			if not bufname or not bufname:match("^NvimTree") then
-				-- print(vim.inspect(window_config))
+			if buf_name_is_valid(bufname) then
 				table.insert(valid_winid, win_id)
 			end
 		end
@@ -222,4 +228,5 @@ return {
 	darken_hex_color = darken_hex_color,
 	get_winnr_to_win_id_mapper = get_winnr_to_win_id_mapper,
 	get_buf_name_to_bufnr = get_buf_name_to_bufnr,
+	buf_name_is_valid = buf_name_is_valid,
 }

@@ -1,7 +1,6 @@
 local Stack = require("better-window.stack") -- Replace with the path to your Stack class
 
 -- EditorGroup
-
 local EditorGroup = {}
 EditorGroup.__index = EditorGroup
 
@@ -35,6 +34,7 @@ end
 
 function EditorGroup:addEditor(bufnr)
 	self.stack:addEditorToStack(bufnr)
+
 	self:setActiveEditor(bufnr)
 end
 
