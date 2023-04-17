@@ -54,20 +54,59 @@ local function restore_metatables(obj, visited)
 	end
 end
 
+function SessionManager:write_to_session_file(content)
+	local session_path = vim.fn.stdpath("data") .. "/better-window/sessions/"
+	local pwd = vim.fn.getcwd()
+	local session_file = session_path .. string.gsub(pwd, "/", "%%") .. ".betterwindow"
+	local session_dir = session_path .. vim.fn.fnamemodify(pwd, ":h")
+	if vim.fn.isdirectory(session_dir) == 0 then
+		local success, err_msg = pcall(vim.fn.mkdir, session_dir, "p")
+		if not success then
+			error("Failed to create session directory: " .. err_msg)
+		end
+	end
+	local session_handle, err_msg = io.open(session_file, "w")
+	if not session_handle then
+		error("Failed to open session file: " .. err_msg)
+	end
+	session_handle:write(content)
+	session_handle:close()
+end
+
+function SessionManager:read_from_session_file()
+	local session_path = vim.fn.stdpath("data") .. "/better-window/sessions/"
+	local pwd = vim.fn.getcwd()
+	local session_file = session_path .. string.gsub(pwd, "/", "%%") .. ".betterwindow"
+
+	if vim.fn.filereadable(session_file) == 0 then
+		error("Session file not found or not readable: " .. session_file)
+	end
+
+	local session_handle, err_msg = io.open(session_file, "r")
+	if not session_handle then
+		error("Failed to open session file: " .. err_msg)
+	end
+
+	local content = session_handle:read("*all")
+	session_handle:close()
+
+	return content
+end
+
 function SessionManager:save()
 	print("saving session")
 	-- print(json.dump(SharedState.get_tab_manager()))
-	vim.g.BETTER_WINDOW_SESSION = json.dump(SharedState.get_tab_manager())
+	local content = json.dump(SharedState.get_tab_manager())
+	SessionManager:write_to_session_file(content)
 end
 
 -- TODO: restore / update buffer ids
 function SessionManager:restore()
 	print("restoring session")
-	local _, restored = json.load(vim.g.BETTER_WINDOW_SESSION)
+	local content = SessionManager:read_from_session_file()
+	local _, restored = json.load(content)
 	restore_metatables(restored)
 
-	-- print("restored")
-	-- restored:debug(1)
 
 	SharedState.set_tab_manager(restored)
 

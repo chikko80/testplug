@@ -1,7 +1,8 @@
 require("better-window.winbar.autocommands")
 local SharedState
 
--- TOOD: on very large complex layouts, not every group is restored properly
+-- TODO: seems like there is a timing issue on restoring, sometimes it doesn't work (buffer doesn't get updated)
+-- TODO: check if tabs work
 
 local function setup()
 	-- Create commands

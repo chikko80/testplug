@@ -1,5 +1,4 @@
-local init = require("better-window")
-
+local SharedState = require("better-window.state")
 local api = vim.api
 
 local M = {}
@@ -15,22 +14,23 @@ function M.on_select(bufnr)
 end
 
 function M.show_popup()
-
+	local tab_id = vim.api.nvim_get_current_tabpage()
 	local win_id = vim.api.nvim_get_current_win()
 	local buf_id = vim.api.nvim_get_current_buf()
-	local editors_per_win = init.get_windows_manager():getEditorGroup(win_id)
+
+	local editor_group = SharedState.get_tab_manager():get_windows_manager(tab_id):getEditorGroup(win_id)
 
 	-- bufnumbers to bufnames
 	local bufnames = {}
 	local bufnumbers = {}
 
-	for i = #editors_per_win.items, 1, -1 do
-		local item = editors_per_win.items[i]
+	for i = #editor_group.stack.items, 1, -1 do
+		local editor = editor_group.stack.items[i]
 		-- exclude current buffer
-		if item ~= buf_id then
-			local bufname = vim.api.nvim_buf_get_name(item):match("([^/]+)$")
+		if editor.buf_nr ~= buf_id then
+			local bufname = editor.buf_name:match("([^/]+)$")
 			table.insert(bufnames, bufname)
-			table.insert(bufnumbers, item)
+			table.insert(bufnumbers, editor.buf_nr)
 		end
 	end
 

@@ -130,4 +130,31 @@ function WindowManager:split(command)
 	self.editor_groups[newWinId] = new_group
 end
 
+function WindowManager:prettyPrint()
+	local output = "Window Manager for Tab ID " .. tostring(self.tabId) .. ":\n"
+
+	output = output .. "Number of editor groups: " .. tostring(#self.editor_groups) .. "\n"
+
+	for winId, editor_group in pairs(self.editor_groups) do
+		output = output .. "Editor Group " .. tostring(winId) .. ":\n"
+		output = output .. "  Window ID: " .. tostring(editor_group.win_id) .. "\n"
+		output = output .. "  Window Number: " .. tostring(editor_group.win_nr) .. "\n"
+		output = output .. "  Active Editor: " .. tostring(editor_group.activeEditor) .. "\n"
+		output = output .. "  Editors Stack: "
+
+		for i, item in ipairs(editor_group.stack.items) do
+			local bufname = item.buf_name:match("([^/]+)$")
+			output = output .. bufname
+
+			if i < #editor_group.stack.items then
+				output = output .. ", "
+			end
+		end
+
+		output = output .. "\n\n"
+	end
+
+	print(output)
+end
+
 return WindowManager
