@@ -81,7 +81,7 @@ function M.get_file_info(name, win_id, bufnr)
 
 		name = (#name > maxname_len and string.sub(name, 1, 14) .. "..") or name
 
-		local padding = (24 - #name - 7) / 2
+		local padding = (24 - #name - 6) / 2
 
 		name = (
 			is_main_active_buffer(win_id, bufnr) and M.apply_hl_group("ActiveEditor", name)

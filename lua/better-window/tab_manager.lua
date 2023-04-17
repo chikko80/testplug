@@ -123,4 +123,11 @@ function TabManager:get_windows_manager(tabId)
 	return self.windows_manager[tabId]
 end
 
+function TabManager:prettyPrint(tabId)
+	if not self.windows_manager[tabId] then
+		return
+	end
+	self.windows_manager[tabId]:prettyPrint()
+end
+
 return TabManager

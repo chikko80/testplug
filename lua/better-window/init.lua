@@ -88,6 +88,11 @@ local function get_windows_manager()
 	return SharedState.get_tab_manager():get_windows_manager(tabId)
 end
 
+local function pretty_print()
+	local tabId = vim.api.nvim_get_current_tabpage()
+	SharedState.get_tab_manager():prettyPrint(tabId)
+end
+
 return {
 	add_tab = add_tab,
 	remove_tab = remove_tab,
@@ -99,4 +104,5 @@ return {
 	setup = setup,
 	debug = debug,
 	get_windows_manager = get_windows_manager,
+	pretty_print = pretty_print,
 }

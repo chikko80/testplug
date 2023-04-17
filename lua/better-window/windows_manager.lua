@@ -135,8 +135,18 @@ function WindowManager:prettyPrint()
 
 	output = output .. "Number of editor groups: " .. tostring(#self.editor_groups) .. "\n"
 
-	for winId, editor_group in pairs(self.editor_groups) do
-		output = output .. "Editor Group " .. tostring(winId) .. ":\n"
+	-- Sort editor groups by win_nr
+	local sorted_editor_groups = {}
+	for _, editor_group in pairs(self.editor_groups) do
+		table.insert(sorted_editor_groups, editor_group)
+	end
+	table.sort(sorted_editor_groups, function(a, b)
+		return a.win_nr < b.win_nr
+	end)
+
+	-- Print the sorted editor groups
+	for _, editor_group in ipairs(sorted_editor_groups) do
+		output = output .. "Editor Group " .. tostring(editor_group.win_id) .. ":\n"
 		output = output .. "  Window ID: " .. tostring(editor_group.win_id) .. "\n"
 		output = output .. "  Window Number: " .. tostring(editor_group.win_nr) .. "\n"
 		output = output .. "  Active Editor: " .. tostring(editor_group.activeEditor) .. "\n"
