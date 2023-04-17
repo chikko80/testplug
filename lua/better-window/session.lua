@@ -96,13 +96,22 @@ end
 
 function SessionManager:save()
 	print("saving session")
+
+	-- HACK: close nvim-tree - fix this later
+	-- TODO:
+	local view = require("nvim-tree.view")
+	local is_visible = view.is_visible()
+
+	local api = require("nvim-tree.api")
+	if is_visible then
+		api.tree.close()
+	end
 	-- print(json.dump(SharedState.get_tab_manager()))
-	SharedState.get_tab_manager():update_window_numbers(vim.api.nvim_tabpage_list_wins(1))
+	SharedState.get_tab_manager():update_window_numbers(1)
 	local content = json.dump(SharedState.get_tab_manager())
 	SessionManager:write_to_session_file(content)
 end
 
--- TODO: restore / update buffer ids
 function SessionManager:restore()
 	print("restoring session")
 	local content = SessionManager:read_from_session_file()

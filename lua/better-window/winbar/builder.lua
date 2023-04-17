@@ -4,6 +4,7 @@ local M = {}
 
 local SharedState = require("better-window.state")
 
+-- TODO: Adjust color based on theme
 vim.api.nvim_set_hl(0, "ActiveEditor", { bold = true })
 vim.api.nvim_set_hl(0, "InactiveEditor", { fg = "#546178", bg = "#171b21" })
 
