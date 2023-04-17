@@ -16,17 +16,9 @@ function WindowManager.new(tabId)
 	return self
 end
 
-function WindowManager:updateDataAfterRestore(winNr, newWinId, buf_mapper)
-	for old_win_id, editor_group in pairs(self.editor_groups) do
-		if editor_group.win_nr == winNr then
-			-- update data
-			editor_group:updateWinId(newWinId)
-			editor_group:updateBufNrs(buf_mapper)
-
-			-- upsert the editor group
-			self.editor_groups[old_win_id] = nil
-			self.editor_groups[newWinId] = editor_group
-		end
+function WindowManager:updateEditorGroups(updated)
+	for win_id, editor_group in pairs(updated) do
+		self.editor_groups[win_id] = editor_group
 	end
 end
 
@@ -39,6 +31,15 @@ end
 function WindowManager:getEditorGroup(winId)
 	-- get the editor group by winId
 	return self.editor_groups[winId]
+end
+
+function WindowManager:popEditorGroupByWinNr(winNr)
+	for win_id, editor_group in pairs(self.editor_groups) do
+		if editor_group.win_nr == winNr then
+			self.editor_groups[win_id] = nil
+			return editor_group
+		end
+	end
 end
 
 function WindowManager:findByWindowNr(winNr)

@@ -3,6 +3,7 @@ local json = require("better-window.json")
 
 local TabManager = require("better-window.tab_manager")
 local WindowManager = require("better-window.windows_manager")
+
 local EditorGroup = require("better-window.editor_group")
 local Stack = require("better-window.stack")
 local Node = require("better-window.node")
@@ -96,6 +97,7 @@ end
 function SessionManager:save()
 	print("saving session")
 	-- print(json.dump(SharedState.get_tab_manager()))
+	SharedState.get_tab_manager():update_window_numbers(vim.api.nvim_tabpage_list_wins(1))
 	local content = json.dump(SharedState.get_tab_manager())
 	SessionManager:write_to_session_file(content)
 end
@@ -106,7 +108,6 @@ function SessionManager:restore()
 	local content = SessionManager:read_from_session_file()
 	local _, restored = json.load(content)
 	restore_metatables(restored)
-
 
 	SharedState.set_tab_manager(restored)
 
@@ -119,18 +120,34 @@ function SessionManager:restore()
 	for _, tabId in ipairs(tabs) do
 		-- get window ids of current session
 		local mapper = utils.get_winnr_to_win_id_mapper(tabId)
+		print(vim.inspect(#mapper))
+
 		local windows_manager = tab_manager:get_windows_manager(tabId)
+		if not windows_manager then
+			error("no window manager")
+		end
+
+		-- windows_manager:prettyPrint()
 
 		if windows_manager then
+			local updated_editors = {}
 			-- restore / update new window ids from current session
 			for winNr, winId in pairs(mapper) do
-				windows_manager:updateDataAfterRestore(winNr, winId, buf_mapper)
+				print("mapper data", winNr, winId)
+				local editor_group = windows_manager:popEditorGroupByWinNr(winNr)
+				if editor_group then
+					editor_group:updateWinId(winId)
+					editor_group:updateBufNrs(buf_mapper)
+					updated_editors[winId] = editor_group
+				end
 			end
+			windows_manager:updateEditorGroups(updated_editors)
 		else
 			error("no window manager")
 		end
 		-- update / restore last layout table
 		windows_manager.last_layout = utils.get_layout(tabId)
+		print("len last layout after init", #windows_manager.last_layout)
 	end
 	-- print("final")
 	-- print(vim.inspect(SharedState.get_tab_manager()))
